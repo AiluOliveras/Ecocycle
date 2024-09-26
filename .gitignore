@@ -1,0 +1,5 @@
+ecoenv/
+.ecoenv
+ecocycle/settings.py
+*.pyc
+db/

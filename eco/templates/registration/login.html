@@ -1,0 +1,41 @@
+<html>
+    <head>
+        {# Cargamos libreria bootstrap #}
+        {% load bootstrap4 %}
+        {# Cargamos bootstrap css #}
+        {% bootstrap_css %}
+        {# Archivos #}
+        {% load static %}
+
+    </head>
+    <body style="background-color:#b0ccf1;border-radius: 25px;margin-top: 10px;">
+        <!-- Icono del sistema-->
+        <div>
+            <a style="color:black; margin-top: 2px; font-size:25px;vertical-align: middle;" class="navbar-brand" href="/">Ecocycle</a>
+        </div>
+        <!-- Form del login -->
+        <div style="margin-top: 5%;margin-right: 25%;margin-left: 25%;background-color:white;border-radius: 25px;">
+            <br>
+            <br>
+            <h3 class="card-title text-center">Iniciar sesión en Ecocycle</h3>
+            <form method="post" style="width: 97%; margin: 0 auto; ">
+                {% csrf_token %}
+                <!-- username -->
+                <p>
+                    <label for="id_username" style="font-size:18px;">Nombre de usuario: </label>
+                    <input type="text" style="float:right;margin-bottom: 25px;font-size:16px;" class="form-control form-control-sm" name="username" autofocus="" autocapitalize="none" autocomplete="username" maxlength="150" required="" id="id_username">
+                </p>
+                <!-- password -->
+                <p>
+                    <label for="id_password" style="font-size:18px;">Contraseña: </label>
+                    <input type="password" style="float:right;margin-bottom: 30px;font-size:16px;" class="form-control form-control-sm" name="password" autocomplete="current-password" required="" id="id_password">
+                </p>
+                <button type="submit" class="btn btn-primary btn-block">Acceder</button>
+            </form>
+            <br>
+            <br>
+        </div>
+        
+    </body>
+
+</html>

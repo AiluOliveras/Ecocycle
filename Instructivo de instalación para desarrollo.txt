@@ -1,0 +1,29 @@
+Requerimientos básicos para instalación:
+	-python3 (3.10.6)
+	-pip3 (22.0.2)
+	-mysql (8.0.31)
+	-virtual env
+	-el resto se instala desde el archivo requirements, seguir punteo debajo.
+	 
+1- Crear carpeta que contendra todo el proyecto
+2- Crear nuevo env, comando: python3 -m venv ecoenv 
+(calenv será el nombre de nuestro env)
+3- Levanto mi env. Esto debe hacerse SIEMPRE al empezar a programar. comando: . ecoenv/bin/activate
+4- Obtengo proyecto de git: ecocycle
+5- Crear bbdd desde una consola, comando para abrir mysql: mysql -u root -p 
+6- En mysql, creamos la base. Comando: create database ecocycle;
+comando quit para salir
+7- Iniciar mysql y configurar bbdd. Comando para iniciar mysql: sudo service mysql start. (Probablemente necesiten iniciarlo cada vez que prendan la pc)
+recomiendo usar dbeaver para administrar la base. tocás boton enchufe para crear conexion con bd -> mysql -> nombre le ponemos ecocycle. user le completamos nuestras credenciales -> tocamos en 'finalizar' y ya la crea. Si anduvo bien, me marca dbeaver con un tic verde la bbdd.
+6- Creamos y configuramos nuestro setting.py con los datos de nuestra bbdd. Guiarse con archivo settings-ejemplo.
+7- Instalamos requirements.txt (Si mal no recuerdo, el comando era: pip3 install -r requirements.txt).
+8- Abrimos consola y en nuestro proyecto: python3 manage.py runserver. si todo salió bien, deberia levantar en http://127.0.0.1:8000/bienvenida/ y ver el texto.
+
+Comandos importantes:
+- python3 manage.py runserver -> levantar app
+- python3 manage.py makemigrations -> crea migraciones automaticamente (no se escriben a mano)
+- python3 manage.py migrate -> aplica migraciones a bbdd, importante antes de empezar a programar para ver reflejado el modelo.
+- python3 manage.py createsuperuser -> crear superusuario para acceder al sistema
+
+- docker-compose build -> construir contenedor docker
+- docker-compose up -> levantar contenedor
