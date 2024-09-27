@@ -1,0 +1,32 @@
+
+<html>
+
+    <head>
+        {# Cargamos libreria bootstrap #}
+        {% load bootstrap4 %}
+        {# Cargamos bootstrap css #}
+        {% bootstrap_css %}
+        {# Archivos #}
+        {% load static %}
+
+    </head>
+
+    <body>
+        {# JS y jquery bootstrap #}
+        {% bootstrap_javascript jquery='full' %}
+
+        <div class="col-sm-10"> <!-- Margen izquierdo -->
+
+            <h4 style="font-weight:bold;">Detalles del formulario</h4>
+
+            <p><span style="font-weight:bold;">Fecha:</span> <br> {{object.fecha | date:"d/m/Y" }}</p>
+
+            <h6 style="font-weight:bold;">Materiales cargados:</h6>
+            {% for material in materiales %}
+                <p><span style="font-weight:bold;"></span> • {{material.tipo.nombre}} ({{material.cantidad}}kg)</p>
+            {% endfor %}
+
+            <a href="/materiales/agregar/?form_id={{object.id}}" type="submit" class="btn btn-primary"> Agregar material </a>
+        </div>        
+    </body>
+</html>
