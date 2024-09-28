@@ -11,4 +11,4 @@ def bonita(request):
 
     token = access.get_token()
     
-    return HttpResponse("Bonita!!")
+    return HttpResponse(token)
