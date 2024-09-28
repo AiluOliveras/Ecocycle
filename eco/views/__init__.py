@@ -1,3 +1,3 @@
-from .indexView import index
+from .indexView import index, bonita
 from .materialesView import MaterialesCreate
 from .formulariosView import FormulariosDetail
