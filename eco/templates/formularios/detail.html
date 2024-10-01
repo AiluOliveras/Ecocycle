@@ -26,7 +26,9 @@
                 <p><span style="font-weight:bold;"></span> • {{material.tipo.nombre}} ({{material.cantidad}}kg)</p>
             {% endfor %}
 
-            <a href="/materiales/agregar/?form_id={{object.id}}" type="submit" class="btn btn-primary"> Agregar material </a>
+            <a href="/materiales/agregar/?form_id={{object.id}}" type="submit" class="btn btn-primary">Agregar material</a>
+            <a class="btn btn-info" href="/formularios/cerrar?formulario={{object.id}}">Cerrar formulario</a>
+            <a href="/inicio" type="submit" class="btn btn-danger">Volver al inicio</a>
         </div>        
     </body>
 </html>

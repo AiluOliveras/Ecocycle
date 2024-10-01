@@ -15,14 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from eco.views import MaterialesCreate, FormulariosDetail
+from eco.views import MaterialesCreate, FormulariosDetail, FormulariosCreate, cerrar_formulario
 from django.contrib.auth.views import LoginView, LogoutView
 
 urlpatterns = [
     path('bienvenida/', include('eco.urls')),
 
     path('home/', LoginView.as_view()),
+    
+    path('inicio/', FormulariosCreate.as_view(template_name = "formularios/create.html"),name='inicio'),
     path('formularios/detalle/<int:pk>', FormulariosDetail.as_view(template_name = "formularios/detail.html"),name='formularios/detalle'),
+    path('formularios/cerrar',cerrar_formulario),
     path('materiales/agregar/', MaterialesCreate.as_view(template_name = "materiales/create.html"),name='materiales'),
 
     path('accounts/login/',LoginView.as_view()),
