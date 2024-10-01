@@ -36,6 +36,10 @@ class Process:
         response = self.access.make_request('POST', f'API/bpm/process/{id}/instantiation')
         return response.json()
 
+    def checkCase(self, case_id):
+        case_response = self.access.make_request('GET', f'API/bpm/case/{case_id}')
+        print(f"Estado del caso recién creado: {case_response}")
+
     def setVariable(self, taskId, variable, valor, tipo):
         task_response = self.access.make_request('GET', f'API/bpm/userTask/{taskId}')
         caseId = task_response.json()['data']['caseId']
@@ -46,12 +50,16 @@ class Process:
         # en caso de que sea decimal lo cambio a float (decimal da error)
         if isinstance(valor, Decimal):
             valor = float(valor)
-        response = self.access.make_request('PUT', f'API/bpm/caseVariable/{caseId}/{variable}', json={variable: valor, 'type': tipo})
-        return response.json()
+        response = self.access.make_request('PUT', f'API/bpm/caseVariable/{caseId}/{variable}', json={'name':variable,'value': valor, 'type': f"java.lang.{tipo}"})
+        return response
 
     def assignTask(self, taskId, userId):
         response = self.access.make_request('PUT', f'API/bpm/userTask/{taskId}', json={'assigned_id': userId})
         return response.json()
+
+    def detailsTask(self, task_id):
+        task_details = self.access.make_request('GET', f'API/bpm/userTask/{task_id}')
+        print(f"Detalles de la tarea {task_id}: {task_details.json()}")
 
     def searchActivityByCase(self, caseId):
         response = self.access.make_request('GET', f'API/bpm/task?f=caseId={caseId}')

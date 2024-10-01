@@ -2,8 +2,8 @@ import requests
 from http.cookiejar import CookieJar
 
 class Access:
-    username = 'walter.bates'
-    password = 'bpm'
+    username = 'install'
+    password = 'install'
     bonita_url = 'http://localhost:8080/bonita'
     bonita_token = ''
     

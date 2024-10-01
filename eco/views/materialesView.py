@@ -34,7 +34,7 @@ class MaterialesCreate(PermissionRequiredMixin, SuccessMessageMixin, CreateView)
         form_id=self.request.GET.get('form_id', None) #get id de la url
         if (form_id):
             self.object.formulario_id=form_id
-        print(form)
+        print(f"FORMULARIO {form}")
         self.start_bonita_process(form)
         return super().form_valid(form)
 
@@ -48,21 +48,28 @@ class MaterialesCreate(PermissionRequiredMixin, SuccessMessageMixin, CreateView)
 
         # Get the Bonita process ID by name
         process_id = bonita_process.getProcessId('Proceso de recolección de materiales')
-
+        print(f"PROCESS ID {process_id}")
         # Initiate the process
         response = bonita_process.initiateProcess(process_id)
-
+        print(f"RESPUESTA DE INICIAR PROCESO {response}")
         # Extract caseId from the response
         case_id = response['caseId']
-
+        print(f"CASE_id {case_id}")
+        bonita_process.checkCase(case_id)
+        cantidad = form.cleaned_data['cantidad']
+        tipo = form.cleaned_data['tipo'].nombre
+        print(f"CANTIDAD {cantidad}")
+        print(f"TIPO {tipo}")
         # Set the process variables using the form data
-        bonita_process.setVariableByCase(case_id, 'cantidad_materiales', form.cleaned_data['cantidad'], 'float')
-        bonita_process.setVariableByCase(case_id, 'tipo_material', form.cleaned_data['tipo'].nombre, 'String')
-
+        respue = bonita_process.setVariableByCase(case_id, 'cantidad_materiales', cantidad, 'Double')
+        respuesta = bonita_process.setVariableByCase(case_id, 'tipo_material', tipo, 'String')
+        print(f"Devolucion del cantidad materiales {respue}")
+        print(f"Devolucion del set variable {respuesta}")
         # Assign the task to a user (e.g., 'bates')
         task_data = bonita_process.searchActivityByCase(case_id)
         print(f"task data: {task_data}")
         task_id = task_data[0]['id']  # Assuming the first task in the list
-
+        
         # Complete the activity
-        bonita_process.completeActivity(task_id)
+        respuesta = bonita_process.completeActivity(task_id)
+        print(f"SALIDA DEL COMPLETE ACTIVITY {respuesta}")
