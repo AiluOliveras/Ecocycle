@@ -2,8 +2,8 @@ import requests
 from http.cookiejar import CookieJar
 
 class Access:
-    username = 'install'
-    password = 'install'
+    username = 'walter.bates'
+    password = 'bpm'
     bonita_url = 'http://localhost:8080/bonita'
     bonita_token = ''
     
@@ -51,3 +51,28 @@ class Access:
         response = self.session.request(method, url, **kwargs)
         return response
 
+    def make_request_list(self, method, endpoint, payload):
+            """
+            Make a request (GET, POST, etc.) to the Bonita API.
+            Token is automatically included in the headers.
+            """
+            url = f'{self.bonita_url}/{endpoint}'
+            # Imprimir la solicitud que se va a enviar para depuración
+            print(f"URL: {url}")
+            print(f"Payload: {payload}")
+
+            try:
+                # Realizar la solicitud usando 'json=' para serializar a JSON
+                response = self.session.request(method, url, json=payload)
+
+                # Imprimir detalles de la respuesta para depuración
+                print(f"Status Code: {response.status_code}")
+                print(f"Response Text: {response.text}")
+
+                return response
+
+            except requests.exceptions.RequestException as e:
+                print(f"Error al realizar la solicitud: {e}")
+                return None
+                
+            return response

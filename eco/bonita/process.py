@@ -1,5 +1,6 @@
 from eco.bonita.access import Access
 from decimal import Decimal
+import json
 
 class Process:
     def __init__(self, access:Access):
@@ -38,7 +39,7 @@ class Process:
 
     def checkCase(self, case_id):
         case_response = self.access.make_request('GET', f'API/bpm/case/{case_id}')
-        print(f"Estado del caso recién creado: {case_response}")
+        print(f"Estado del caso recién creado: {case_response.status_code}")
 
     def setVariable(self, taskId, variable, valor, tipo):
         task_response = self.access.make_request('GET', f'API/bpm/userTask/{taskId}')
@@ -66,8 +67,8 @@ class Process:
         return response.json()
 
     def completeActivity(self, taskId):
-        response = self.access.make_request('POST', f'API/bpm/userTask/{taskId}/execution')
-        return response.json()
+        response = self.access.make_request('POST', f'API/bpm/userTask/{taskId}/execution?assign=true')
+        return response
 
     def getVariable(self, taskId, variable):
         task_response = self.access.make_request('GET', f'API/bpm/userTask/{taskId}')
