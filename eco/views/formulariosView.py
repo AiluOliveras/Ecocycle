@@ -12,6 +12,8 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from ..forms import FormulariosForm
 from django.http import HttpResponseRedirect, HttpResponse
 
+from eco.bonita.access import Access
+from eco.bonita.process import Process
 
 class FormulariosDetail(DetailView):
     model = Formularios
@@ -58,7 +60,13 @@ def cerrar_formulario(request, *args, **kwargs):
     """
 
     formulario= request.GET.get("formulario")
+    
     if formulario:
+        #Abro comunicación con Bonita
+        access = Access()
+        access.login()  # Login to get the token
+        bonita_process = Process(access)
+
         #busco el form
         formulario_up = Formularios.objects.get(id=formulario)
         #seteo el atributo
@@ -66,7 +74,36 @@ def cerrar_formulario(request, *args, **kwargs):
         #guardo
         formulario_up.save()
 
-        #AGREGO CALL A BONITA: SE CIERRA UN FORMULARIO.
+
+        #Busco el proceso y lo instancio
+        process_id = bonita_process.getProcessId('Proceso de recolección de materiales')
+        response = bonita_process.initiateProcess(process_id)
+        #Me quedo con el ID de la instancia
+        case_id = response['caseId']
+        #Checkeo la instancia
+        bonita_process.checkCase(case_id)
+
+        #Me traigo todos los materiales cargados en este formulario
+        materiales = Materiales.objects.filter(formulario_id=formulario).order_by('id')
+        variable_bonita = ""
+        #Formateo todos los materiales como un string para mandarselo a Bonita
+        for material in materiales:
+            if not variable_bonita:
+                variable_bonita += f"{material.tipo.nombre}: {material.cantidad}"
+            else:
+                variable_bonita += f", {material.tipo.nombre}: {material.cantidad}"
+
+        #Seteo la variable del proceso
+        respue = bonita_process.setVariableByCase(case_id, 'materiales_cargados', variable_bonita, 'String')
+        #Busco en que tarea me encuentro
+        task_data = bonita_process.searchActivityByCase(case_id)
+
+        #La doy por completada
+        task_id = task_data[0]['id']  # Assuming the first task in the list
+        
+        # Complete the activity
+        respuesta = bonita_process.completeActivity(task_id)
+        print(f"SALIDA DEL COMPLETE ACTIVITY {respuesta}")
 
         return HttpResponseRedirect('/inicio')
     
