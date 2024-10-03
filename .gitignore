@@ -3,3 +3,4 @@ ecoenv/
 ecocycle/settings.py
 *.pyc
 db/
+.python-version
