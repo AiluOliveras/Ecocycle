@@ -62,6 +62,7 @@ def cerrar_formulario(request, *args, **kwargs):
     formulario= request.GET.get("formulario")
     
     if formulario:
+        print("HOLAAAA")
         #Abro comunicación con Bonita
         access = Access()
         access.login()  # Login to get the token
@@ -74,7 +75,6 @@ def cerrar_formulario(request, *args, **kwargs):
         #guardo
         formulario_up.save()
 
-
         #Busco el proceso y lo instancio
         process_id = bonita_process.getProcessId('Proceso de recolección de materiales')
         response = bonita_process.initiateProcess(process_id)
@@ -82,7 +82,7 @@ def cerrar_formulario(request, *args, **kwargs):
         case_id = response['caseId']
         #Checkeo la instancia
         bonita_process.checkCase(case_id)
-
+        
         #Me traigo todos los materiales cargados en este formulario
         materiales = Materiales.objects.filter(formulario_id=formulario).order_by('id')
         variable_bonita = ""
@@ -101,10 +101,11 @@ def cerrar_formulario(request, *args, **kwargs):
         #La doy por completada
         task_id = task_data[0]['id']  # Assuming the first task in the list
         
-        # Complete the activity
-        respuesta = bonita_process.completeActivity(task_id)
-        print(f"SALIDA DEL COMPLETE ACTIVITY {respuesta}")
-
+        # Complete the activity => No es necesario, las tareas automaticas, en este caso guardar en la base de datos, lo hace automaticamente
+        # Si mando esta solicitud, da como completa entrega de los materiales
+        #respuesta = bonita_process.completeActivity(task_id)
+        #print(f"SALIDA DEL COMPLETE ACTIVITY {respuesta}")
+        print("CHAUUUU")
         return HttpResponseRedirect('/inicio')
     
     return HttpResponse("Hubo un error, por favor regrese a la página anterior.")
