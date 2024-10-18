@@ -1,6 +1,4 @@
-
 <html>
-
     <head>
         {# Cargamos libreria bootstrap #}
         {% load bootstrap4 %}
@@ -8,27 +6,27 @@
         {% bootstrap_css %}
         {# Archivos #}
         {% load static %}
-
     </head>
 
-    <body>
+    <body style="background-color:#b0ccf1;border-radius: 25px;margin-top: 10px;">
         {# JS y jquery bootstrap #}
         {% bootstrap_javascript jquery='full' %}
 
-        <div class="col-sm-10"> <!-- Margen izquierdo -->
+        <div style="margin-top: 5%; margin-right: 25%; margin-left: 25%; background-color: white; border-radius: 25px; padding: 20px;">
+            <h4 class="text-center" style="font-weight:bold;">Detalles del formulario</h4>
 
-            <h4 style="font-weight:bold;">Detalles del formulario</h4>
-
-            <p><span style="font-weight:bold;">Fecha:</span> <br> {{object.fecha | date:"d/m/Y" }}</p>
+            <p><span style="font-weight:bold;">Fecha:</span><br> {{ object.fecha | date:"d/m/Y" }}</p>
 
             <h6 style="font-weight:bold;">Materiales cargados:</h6>
             {% for material in materiales %}
-                <p><span style="font-weight:bold;"></span> • {{material.tipo.nombre}} ({{material.cantidad}}kg)</p>
+                <p><span style="font-weight:bold;"></span> • {{ material.tipo.nombre }} ({{ material.cantidad }}kg)</p>
             {% endfor %}
 
-            <a href="/materiales/agregar/?form_id={{object.id}}" type="submit" class="btn btn-primary">Agregar material</a>
-            <a class="btn btn-info" href="/formularios/cerrar?formulario={{object.id}}">Cerrar formulario</a>
-            <a href="/inicio" type="submit" class="btn btn-danger">Volver al inicio</a>
+            <div class="text-center" style="margin-top: 20px;">
+                <a href="/materiales/agregar/?form_id={{ object.id }}" class="btn btn-primary">Agregar material</a>
+                <a class="btn btn-info" href="/formularios/cerrar?formulario={{ object.id }}">Cerrar formulario</a>
+                <a href="/inicio" class="btn btn-danger">Volver al inicio</a>
+            </div>
         </div>        
     </body>
 </html>

@@ -1,5 +1,4 @@
 <html>
-
     <head>
         {# Cargamos libreria bootstrap #}
         {% load bootstrap4 %}
@@ -7,34 +6,34 @@
         {% bootstrap_css %}
         {# Archivos #}
         {% load static %}
-
     </head>
 
-    <body>
-        <h4 style="font-weight:bold;">Bienvenido/a!</h4>
+    <body style="background-color:#b0ccf1;border-radius: 25px;margin-top: 10px;">
+        <div style="margin-top: 5%; margin-right: 25%; margin-left: 25%; background-color: white; border-radius: 25px; padding: 20px;">
+            <h4 class="text-center" style="font-weight:bold;">Bienvenido/a!</h4>
 
-        {% if ultimo_formulario %}
-            <h5 style="font-weight:bold;">• Continúa agregando materiales: </h5>
-            <p><span style="font-weight:bold;">Formulario creado el día:</span> {{ ultimo_formulario.fecha}}</p>
-            {% if ultimo_formulario.abierto %}
-                <p><span style="font-weight:bold;">Estado:</span> Abierto</p>
-                <a href="../formularios/detalle/{{ultimo_formulario.id}}" title="Editar" type="button" class="btn btn-primary">Agregar materiales</a>
+            {% if ultimo_formulario %}
+                <h5 style="font-weight:bold;">• Continúa agregando materiales:</h5>
+                <p><span style="font-weight:bold;">Formulario creado el día:</span> {{ ultimo_formulario.fecha }}</p>
+                {% if ultimo_formulario.abierto %}
+                    <p><span style="font-weight:bold;">Estado:</span> Abierto</p>
+                    <a href="../formularios/detalle/{{ ultimo_formulario.id }}" title="Editar" class="btn btn-primary">Agregar materiales</a>
+                {% else %}
+                    <p><span style="font-weight:bold;">Estado:</span> Cerrado</p>
+                {% endif %}
+                <br>
+                <br>
+                <h5 style="font-weight:bold;">• O prueba:</h5>
             {% else %}
-                <!-- Si el form está cerrado, no deja agregar materiales -->
-                <p><span style="font-weight:bold;">Estado:</span> Cerrado</p>
+                <h5 style="font-weight:bold;">Prueba cargando un nuevo formulario:</h5>
             {% endif %}
-            <br>
-            <br>
-            <h5 style="font-weight:bold;">• O prueba: </h5>
-            {% else %}
-            <h5 style="font-weight:bold;">Prueba cargando un nuevo formulario:</h5>
-        {% endif %}
 
-        <div class="col-sm-10">
-            <form method="post" enctype="multipart/form-data">
-
-                <button type="submit" class="btn btn-primary">Cargar un nuevo formulario</button>
-            
-            </form>
+            <div class="text-center" style="margin-top: 20px;">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">Cargar un nuevo formulario</button>
+                </form>
+            </div>
         </div>
+    </body>
 </html>
