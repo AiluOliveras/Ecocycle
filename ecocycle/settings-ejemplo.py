@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'eco',
     'bootstrap4',
     'widget_tweaks',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -52,7 +53,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CSRF_TRUSTED_ORIGINS=['https://127.0.0.1']
+#CSRF_TRUSTED_ORIGINS=['https://127.0.0.1','https://localhost']
 
 ROOT_URLCONF = 'ecocycle.urls'
 
@@ -87,6 +88,13 @@ DATABASES = {
         'HOST': '127.0.0.1', 
         'PORT': '3306',
     }
+}
+
+#API CONF - Importante!
+REST_FRAMEWORK = {
+'DEFAULT_AUTHENTICATION_CLASSES': (
+    'rest_framework.authentication.TokenAuthentication',
+)
 }
 
 

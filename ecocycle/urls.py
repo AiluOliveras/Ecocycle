@@ -15,13 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from eco.views import MaterialesCreate, FormulariosDetail, FormulariosCreate, cerrar_formulario
+from eco.views import MaterialesCreate, FormulariosDetail, FormulariosCreate, cerrar_formulario, bonita, OrdenesList, OrdenReservaUpdate, OrdenEntregaUpdate, PuntoMaterialRegistro
 from django.contrib.auth.views import LoginView, LogoutView
 
 urlpatterns = [
     path('bienvenida/', include('eco.urls')),
 
     path('home/', LoginView.as_view()),
+    path("bonita", bonita, name="bonita"),
     
     path('inicio/', FormulariosCreate.as_view(template_name = "formularios/create.html"),name='inicio'),
     path('formularios/detalle/<int:pk>', FormulariosDetail.as_view(template_name = "formularios/detail.html"),name='formularios/detalle'),
@@ -31,4 +32,11 @@ urlpatterns = [
     path('accounts/login/',LoginView.as_view()),
 
     path('admin/', admin.site.urls),
+
+    # API URLS
+    path('api/ordenes_disponibles/', OrdenesList.as_view(), name='ordenes_list'),
+    path('api/reservar_orden/<int:pk>/', OrdenReservaUpdate.as_view(), name='orden_reserva_update'),
+    path('api/entregar_orden/<int:pk>/', OrdenEntregaUpdate.as_view(), name='orden_entrega_update'),
+    path('api/registrar_deposito/', PuntoMaterialRegistro.as_view(), name='punto_material_registro'),
+
 ]
