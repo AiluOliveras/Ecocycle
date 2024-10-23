@@ -31,7 +31,7 @@ class OrdenReservaUpdate(APIView):
             return Response({'error': 'La orden no existe.'}, status=status.HTTP_404_NOT_FOUND)
 
         if instance.reservado:
-            return Response({'error': 'La orden ya se encuentra reservada.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'La orden ya se encuentra reservada.'}, status=status.HTTP_202_ACCEPTED)
 
         #Validación del proveedor/punto y sus parámetros
         proveedor_id = request.query_params.get('proveedor_id', None)

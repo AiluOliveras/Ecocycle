@@ -62,7 +62,6 @@ def cerrar_formulario(request, *args, **kwargs):
     formulario= request.GET.get("formulario")
     
     if formulario:
-        print("HOLAAAA")
         #Abro comunicación con Bonita
         access = Access()
         access.login()  # Login to get the token
@@ -105,7 +104,6 @@ def cerrar_formulario(request, *args, **kwargs):
         # Si mando esta solicitud, da como completa entrega de los materiales
         #respuesta = bonita_process.completeActivity(task_id)
         #print(f"SALIDA DEL COMPLETE ACTIVITY {respuesta}")
-        print("CHAUUUU")
         return HttpResponseRedirect('/inicio')
     
     return HttpResponse("Hubo un error, por favor regrese a la página anterior.")
