@@ -18,6 +18,11 @@ from django.urls import path, include
 from eco.views import MaterialesCreate, FormulariosDetail, FormulariosCreate, cerrar_formulario, bonita, OrdenesList, OrdenReservaUpdate, OrdenEntregaUpdate, PuntoMaterialRegistro
 from django.contrib.auth.views import LoginView, LogoutView
 
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
 urlpatterns = [
     path('bienvenida/', include('eco.urls')),
 
@@ -39,4 +44,7 @@ urlpatterns = [
     path('api/entregar_orden/<int:pk>/', OrdenEntregaUpdate.as_view(), name='orden_entrega_update'),
     path('api/registrar_deposito/', PuntoMaterialRegistro.as_view(), name='punto_material_registro'),
 
+    # API - JWT Tokens
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

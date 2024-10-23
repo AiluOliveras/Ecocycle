@@ -3,14 +3,22 @@ from rest_framework.response import Response
 from rest_framework import status
 from ..models import Ordenes, Puntos
 from ..serializers import OrdenesSerializer
+from rest_framework.permissions import IsAuthenticated
+
 
 class OrdenesList(APIView):
+
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         objetos = Ordenes.objects.filter(reservado=False)
         serializer = OrdenesSerializer(objetos, many=True)
         return Response(serializer.data)
 
 class OrdenReservaUpdate(APIView):
+
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, pk):
 
         #Parámetros:
@@ -44,6 +52,9 @@ class OrdenReservaUpdate(APIView):
         return Response('La orden fué reservada exitosamente', status=status.HTTP_200_OK)
 
 class OrdenEntregaUpdate(APIView):
+
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, pk):
 
         #Parámetros:

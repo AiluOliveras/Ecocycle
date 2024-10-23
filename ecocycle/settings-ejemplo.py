@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+from datetime import timedelta
+
 
 # Application definition
 
@@ -40,7 +42,8 @@ INSTALLED_APPS = [
     'eco',
     'bootstrap4',
     'widget_tweaks',
-    'rest_framework'
+    'rest_framework',
+    'rest_framework_simplejwt'
 ]
 
 MIDDLEWARE = [
@@ -83,18 +86,29 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ecocycle',
-        'USER': 'myuser',
-        'PASSWORD': 'mypass',
-        'HOST': '127.0.0.1', 
+        'USER': 'test',
+        'PASSWORD': 'test',
+        'HOST': '127.0.0.1', #'127.0.0.1' para app, 'db' para docker
         'PORT': '3306',
     }
 }
 
 #API CONF - Importante!
+
+# REST_FRAMEWORK = {
+# 'DEFAULT_AUTHENTICATION_CLASSES': (
+#     'rest_framework.authentication.TokenAuthentication',
+# )
+# }
 REST_FRAMEWORK = {
-'DEFAULT_AUTHENTICATION_CLASSES': (
-    'rest_framework.authentication.TokenAuthentication',
-)
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1)
 }
 
 

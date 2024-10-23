@@ -3,8 +3,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from ..models import Puntos,Tiposmateriales
 from ..serializers import PuntosSerializer
+from rest_framework.permissions import IsAuthenticated
 
 class PuntoMaterialRegistro(APIView):
+
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
 
         #Parámetros:
