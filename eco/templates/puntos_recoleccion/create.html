@@ -1,0 +1,40 @@
+<html>
+    <head>
+        {# Cargamos libreria bootstrap #}
+        {% load bootstrap4 %}
+        {# Cargamos bootstrap css #}
+        {% bootstrap_css %}
+        {# Archivos #}
+        {% load static %}
+    </head>
+
+    <body style="background-color:#b0ccf1;border-radius: 25px;margin-top: 10px;">
+        {# JS y jquery bootstrap #}
+        {% bootstrap_javascript jquery='full' %}
+        {# Widget Tweaks carga las cajas de texto #}
+        {% load widget_tweaks %}
+
+        <div style="margin-top: 5%;margin-right: 25%;margin-left: 25%;background-color:white;border-radius: 25px; padding: 20px;">
+            <h4 class="text-center" style="font-weight:bold;">Carga de punto de recolección de materiales</h4>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="cantidad" style="font-weight:bold;">Nombre</label>
+                    {{ form.nombre|add_class:"form-control" }} 
+                </div>
+
+                <div class="form-group">
+                    <label for="cantidad" style="font-weight:bold;">Dirección</label>
+                    {{ form.direccion|add_class:"form-control" }} 
+                </div>
+
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <a href="/inicio" class="btn btn-danger">Volver al inicio</a>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>

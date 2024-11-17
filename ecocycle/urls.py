@@ -15,7 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from eco.views import MaterialesCreate, FormulariosDetail, FormulariosCreate, cerrar_formulario, bonita, OrdenesList, OrdenReservaUpdate, OrdenEntregaUpdate, PuntoMaterialRegistro
+from eco.views import MaterialesCreate, FormulariosDetail, FormulariosCreate, cerrar_formulario, bonita, OrdenesList, OrdenReservaUpdate, OrdenEntregaUpdate, PuntoMaterialRegistro,Punto_recoleccionCreate,Punto_recoleccionList,UsuariosList
+from eco.views import RecicladoresList, destroy_reciclador_punto,create_reciclador_punto
 from django.contrib.auth.views import LoginView, LogoutView
 
 from rest_framework_simplejwt.views import (
@@ -33,8 +34,16 @@ urlpatterns = [
     path('formularios/detalle/<int:pk>', FormulariosDetail.as_view(template_name = "formularios/detail.html"),name='formularios/detalle'),
     path('formularios/cerrar',cerrar_formulario),
     path('materiales/agregar/', MaterialesCreate.as_view(template_name = "materiales/create.html"),name='materiales'),
+    path('punto_recoleccion/listar/', Punto_recoleccionList.as_view(template_name = "puntos_recoleccion/index.html"), name='puntos_recoleccion'),
+    path('punto_recoleccion/agregar/', Punto_recoleccionCreate.as_view(template_name = "puntos_recoleccion/create.html")),
+    path('punto_recoleccion/listar/recicladores/', RecicladoresList.as_view(template_name = "recicladores/index.html"), name='recicladores'),
+    path('punto_recoleccion/listar/recicladores/borrado',destroy_reciclador_punto),
+
+    path('recicladores/agregar', UsuariosList.as_view(template_name = "puntos_recoleccion/anidate.html"), name='anidate'),
+    path('recicladores/crear',create_reciclador_punto), #pivot e/ reciclador y punto
 
     path('accounts/login/',LoginView.as_view()),
+    path('accounts/logout/',LogoutView.as_view(), name='logout'),
 
     path('admin/', admin.site.urls),
 

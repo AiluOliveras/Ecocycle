@@ -4,7 +4,7 @@ import datetime
 
 class Puntos(models.Model):
     """
-    Modelo API. Corresponde a un punto de recolección.
+    Modelo API. Corresponde a un centro de recolección.
     """
 
     nombre = models.CharField(max_length=100)

@@ -36,11 +36,26 @@ class FormulariosCreate(PermissionRequiredMixin, SuccessMessageMixin, CreateView
     
     def get_context_data(self, **kwargs):
         context = super(FormulariosCreate, self).get_context_data(**kwargs) # GET de la data default del contexto
-        context['ultimo_formulario'] = Formularios.objects.order_by('id').last() # Trae el último form creado
+        if (self.request.user.is_staff):
+            #si es staff del centro de recolección
+            try:
+                context['ultimo_formulario'] = Formularios.objects.filter(abierto=False).latest('id')
+            except Formularios.DoesNotExist:
+                context['ultimo_formulario'] = None
+            
+            context['ultimos_formularios'] = Formularios.objects.filter(abierto=False).order_by('-id')[:10]
+
+        else:
+            #es reciclador
+            try:
+                context['ultimo_formulario'] = Formularios.objects.filter(abierto=True,reciclador_id=self.request.user.id).latest('id') # Trae el último form creado
+            except Formularios.DoesNotExist:
+                context['ultimo_formulario'] = None
         return context
 
     def form_valid(self, form):
         #Si el formulario de carga es válido, guarda el objeto.
+        form.instance.reciclador_id = self.request.user.id
         self.object = form.save()
 
         #AGREGO CALL A BONITA: SE CREA UN FORMULARIO.
@@ -62,10 +77,10 @@ def cerrar_formulario(request, *args, **kwargs):
     formulario= request.GET.get("formulario")
     
     if formulario:
-        #Abro comunicación con Bonita
-        access = Access()
-        access.login()  # Login to get the token
-        bonita_process = Process(access)
+        # #Abro comunicación con Bonita
+        # access = Access()
+        # access.login()  # Login to get the token
+        # bonita_process = Process(access)
 
         #busco el form
         formulario_up = Formularios.objects.get(id=formulario)
@@ -74,36 +89,36 @@ def cerrar_formulario(request, *args, **kwargs):
         #guardo
         formulario_up.save()
 
-        #Busco el proceso y lo instancio
-        process_id = bonita_process.getProcessId('Proceso de recolección de materiales')
-        response = bonita_process.initiateProcess(process_id)
-        #Me quedo con el ID de la instancia
-        case_id = response['caseId']
-        #Checkeo la instancia
-        bonita_process.checkCase(case_id)
+        # #Busco el proceso y lo instancio
+        # process_id = bonita_process.getProcessId('Proceso de recolección de materiales')
+        # response = bonita_process.initiateProcess(process_id)
+        # #Me quedo con el ID de la instancia
+        # case_id = response['caseId']
+        # #Checkeo la instancia
+        # bonita_process.checkCase(case_id)
         
-        #Me traigo todos los materiales cargados en este formulario
-        materiales = Materiales.objects.filter(formulario_id=formulario).order_by('id')
-        variable_bonita = ""
-        #Formateo todos los materiales como un string para mandarselo a Bonita
-        for material in materiales:
-            if not variable_bonita:
-                variable_bonita += f"{material.tipo.nombre}: {material.cantidad}"
-            else:
-                variable_bonita += f", {material.tipo.nombre}: {material.cantidad}"
+        # #Me traigo todos los materiales cargados en este formulario
+        # materiales = Materiales.objects.filter(formulario_id=formulario).order_by('id')
+        # variable_bonita = ""
+        # #Formateo todos los materiales como un string para mandarselo a Bonita
+        # for material in materiales:
+        #     if not variable_bonita:
+        #         variable_bonita += f"{material.tipo.nombre}: {material.cantidad}"
+        #     else:
+        #         variable_bonita += f", {material.tipo.nombre}: {material.cantidad}"
 
-        #Seteo la variable del proceso
-        respue = bonita_process.setVariableByCase(case_id, 'materiales_cargados', variable_bonita, 'String')
-        #Busco en que tarea me encuentro
-        task_data = bonita_process.searchActivityByCase(case_id)
+        # #Seteo la variable del proceso
+        # respue = bonita_process.setVariableByCase(case_id, 'materiales_cargados', variable_bonita, 'String')
+        # #Busco en que tarea me encuentro
+        # task_data = bonita_process.searchActivityByCase(case_id)
 
-        #La doy por completada
-        task_id = task_data[0]['id']  # Assuming the first task in the list
+        # #La doy por completada
+        # task_id = task_data[0]['id']  # Assuming the first task in the list
         
-        # Complete the activity => No es necesario, las tareas automaticas, en este caso guardar en la base de datos, lo hace automaticamente
-        # Si mando esta solicitud, da como completa entrega de los materiales
-        #respuesta = bonita_process.completeActivity(task_id)
-        #print(f"SALIDA DEL COMPLETE ACTIVITY {respuesta}")
+        # # Complete the activity => No es necesario, las tareas automaticas, en este caso guardar en la base de datos, lo hace automaticamente
+        # # Si mando esta solicitud, da como completa entrega de los materiales
+        # #respuesta = bonita_process.completeActivity(task_id)
+        # #print(f"SALIDA DEL COMPLETE ACTIVITY {respuesta}")
         return HttpResponseRedirect('/inicio')
     
     return HttpResponse("Hubo un error, por favor regrese a la página anterior.")

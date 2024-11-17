@@ -3,7 +3,7 @@ from django.urls import reverse
 
 class Materiales(models.Model):
     """
-    Se corresponde con los materiales traídos al punto de recolección de residuos.
+    Modelo APP. Se corresponde con los materiales traídos al punto de recolección de residuos.
     """
 
     cantidad=models.DecimalField(max_digits=20, decimal_places=2, null=False)
