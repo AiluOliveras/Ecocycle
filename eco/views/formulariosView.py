@@ -22,7 +22,9 @@ class FormulariosDetail(DetailView):
         context = super(FormulariosDetail, self).get_context_data(**kwargs) # GET de la data default del contexto
         
         #agregamos su listado de materiales ya cargados al context
-        context['materiales'] = Materiales.objects.filter(formulario_id=(self.kwargs['pk'])).order_by('id')
+        context['materiales'] = Materiales.objects.filter(formulario_id=(self.kwargs['pk']),material_recibido=False).order_by('id')
+
+        context['materiales_recibidos'] = Materiales.objects.filter(formulario_id=(self.kwargs['pk']),material_recibido=True).order_by('id')
 
         return context
 
@@ -38,12 +40,18 @@ class FormulariosCreate(PermissionRequiredMixin, SuccessMessageMixin, CreateView
         context = super(FormulariosCreate, self).get_context_data(**kwargs) # GET de la data default del contexto
         if (self.request.user.is_staff):
             #si es staff del centro de recolección
-            try:
-                context['ultimo_formulario'] = Formularios.objects.filter(abierto=False).latest('id')
-            except Formularios.DoesNotExist:
-                context['ultimo_formulario'] = None
-            
-            context['ultimos_formularios'] = Formularios.objects.filter(abierto=False).order_by('-id')[:10]
+
+            #veo si mando el param # de form
+            numero = self.request.GET.get('numero',None)
+            if numero:
+                context['ultimos_formularios'] = Formularios.objects.filter(id__icontains=numero).order_by('-id')[:10]
+            else: #mando los ultimos forms
+                try:
+                    context['ultimo_formulario'] = Formularios.objects.filter(abierto=False).latest('id')
+                except Formularios.DoesNotExist:
+                    context['ultimo_formulario'] = None
+                
+                context['ultimos_formularios'] = Formularios.objects.filter(abierto=False).order_by('-id')[:10]
 
         else:
             #es reciclador

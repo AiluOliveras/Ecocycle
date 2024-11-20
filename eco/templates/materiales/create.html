@@ -15,7 +15,11 @@
         {% load widget_tweaks %}
 
         <div style="margin-top: 5%;margin-right: 25%;margin-left: 25%;background-color:white;border-radius: 25px; padding: 20px;">
-            <h4 class="text-center" style="font-weight:bold;">Carga de material</h4>
+            {% if user.is_staff %}
+                <h4 class="text-center" style="font-weight:bold;">Carga de material recibido</h4>
+            {% else %}
+                <h4 class="text-center" style="font-weight:bold;">Carga de material</h4>
+            {% endif %}
 
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}

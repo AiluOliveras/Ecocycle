@@ -12,20 +12,61 @@
         {# JS y jquery bootstrap #}
         {% bootstrap_javascript jquery='full' %}
 
+        {% if user.is_authenticated %}
+            <form action="{% url 'logout' %}" style="margin-left: 80%;" method="post">
+                <a class="text-center" style="pointer-events: none;color: black;margin-right:3%;" > {{ user.username }} </a>
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-dark">Cerrar sesión</button>
+
+            </form>
+        {% endif %}
+
         <div style="margin-top: 5%; margin-right: 25%; margin-left: 25%; background-color: white; border-radius: 25px; padding: 20px;">
             <h4 class="text-center" style="font-weight:bold;">Detalles del formulario</h4>
+
+            <p><span style="font-weight:bold;">Encargo:</span><br> #{{ object.id }}</p>
+
+            {% if user.is_staff %}
+                <p><span style="font-weight:bold;">Reciclador:</span><br>{{ object.reciclador.username }}</p>
+            {% endif %}
 
             <p><span style="font-weight:bold;">Fecha:</span><br> {{ object.fecha | date:"d/m/Y" }}</p>
 
             <h6 style="font-weight:bold;">Materiales cargados:</h6>
-            {% for material in materiales %}
-                <p><span style="font-weight:bold;"></span> • {{ material.tipo.nombre }} ({{ material.cantidad }}kg)</p>
-            {% endfor %}
+            {% if materiales %}
+                {% for material in materiales %}
+                    <p><span style="font-weight:bold;"></span> • {{ material.tipo.nombre }} ({{ material.cantidad }}kg)</p>
+                {% endfor %}
+            {% else %}
+                <p style="color:grey;font-style: italic;font-size: smaller;margin-left: 2%;"> ningún elemento cargado </p>
+            {% endif %}
 
+            <!-- materiales recibidos en mostrador--> 
+
+            {% if user.is_staff and not object.abierto %}
+                <h6 style="font-weight:bold;margin-top: 3%;">Materiales recibidos:</h6>
+                {% if materiales_recibidos %}
+                    {% for mat in materiales_recibidos %}
+                        <p><span style="font-weight:bold;"></span> • {{ mat.tipo.nombre }} ({{ mat.cantidad }}kg)</p>
+                    {% endfor %}
+                {% else %}
+                    <p style="color:grey;font-style: italic;font-size: smaller;margin-left: 2%;"> ningún elemento cargado </p>
+                {% endif %}
+            {% endif %}
+
+            <!-- botones inferiores-->
             <div class="text-center" style="margin-top: 20px;">
-                <a href="/materiales/agregar/?form_id={{ object.id }}" class="btn btn-primary">Agregar material</a>
-                <a class="btn btn-info" href="/formularios/cerrar?formulario={{ object.id }}">Cerrar formulario</a>
-                <a href="/inicio" class="btn btn-danger">Volver al inicio</a>
+                {% if object.abierto %}
+                    {% if not user.is_staff %}
+                        <a href="/materiales/agregar/?form_id={{ object.id }}" class="btn btn-primary">Agregar material</a>
+                        <a class="btn btn-info" href="/formularios/cerrar?formulario={{ object.id }}">Cerrar formulario</a>
+                    {% endif %}
+                {% else %} <!-- form cerrado -->
+                    {% if user.is_staff %}
+                    <a href="/materiales/verificar?form_id={{ object.id }}" class="btn btn-info">📝 Cargar materiales recibidos en mostrador</a>
+                    {% endif %}
+                {% endif %}
+                <a href="/inicio" style="margin-left: 5%;" class="btn btn-danger"> < Volver al inicio</a>
             </div>
         </div>        
     </body>

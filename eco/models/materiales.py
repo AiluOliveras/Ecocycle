@@ -11,6 +11,8 @@ class Materiales(models.Model):
     
     formulario= models.ForeignKey('Formularios', on_delete=models.CASCADE, null=True, default=None)
 
+    material_recibido= models.BooleanField(default=False) #materiales cargados por mostrador
+
     def get_absolute_url(self):
         """
         Devuelve la URL para acceder a la vista detalle de este form.

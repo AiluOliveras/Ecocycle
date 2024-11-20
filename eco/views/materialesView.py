@@ -37,3 +37,27 @@ class MaterialesCreate(PermissionRequiredMixin, SuccessMessageMixin, CreateView)
 
         return super().form_valid(form)
 
+
+class Materiales_RecibidosCreate(PermissionRequiredMixin, SuccessMessageMixin, CreateView):
+    form_class = MaterialesForm
+    success_message = 'Material cargado exitosamente!'
+    permission_required = 'add_materiales'
+
+
+    def get_context_data(self, **kwargs):
+        context = super(Materiales_RecibidosCreate, self).get_context_data(**kwargs) # GET de la data default del contexto
+        context['tiposmateriales'] = Tiposmateriales.objects.all() # Agrego listado de tipos al contexto
+        return context
+
+    def form_valid(self, form):
+        #Si el formulario de carga es válido, guarda el material.
+        self.object = form.save()
+
+        #Agregamos el material al formulario semanal.
+        form_id=self.request.GET.get('form_id', None) #get id de la url
+        if (form_id):
+            self.object.formulario_id=form_id
+            self.object.material_recibido=True
+
+        return super().form_valid(form)
+

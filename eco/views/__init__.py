@@ -1,5 +1,5 @@
 from .indexView import index, bonita
-from .materialesView import MaterialesCreate
+from .materialesView import MaterialesCreate, Materiales_RecibidosCreate
 from .formulariosView import FormulariosDetail, FormulariosCreate, cerrar_formulario
 from .ordenesView import OrdenesList,OrdenReservaUpdate, OrdenEntregaUpdate
 from .puntosView import PuntoMaterialRegistro
