@@ -61,7 +61,7 @@
                     <p><span style="font-weight:bold;">Número de encargo:</span> #{{ ultimo_formulario.id }}</p>
                     {% if ultimo_formulario.abierto %}
                         <p><span style="font-weight:bold;">Estado:</span> Abierto</p>
-                        <a href="../formularios/detalle/{{ ultimo_formulario.id }}" title="Editar" class="btn btn-primary">Ver formulario</a>
+                        <a href="../formularios/detalle/{{ ultimo_formulario.id }}" title="Editar" class="btn btn-primary">📝 Ver formulario</a>
                     {% else %}
                         <p><span style="font-weight:bold;">Estado:</span> Cerrado</p>
                     {% endif %}
@@ -77,12 +77,13 @@
                 {% endif %}
                 
                 {% if not user.is_staff %}
-                    <div class="text-center" style="margin-top: 20px;">
+                    <div class="text-center" style="display: flex;margin-top: 1%;">
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-primary">Cargar un nuevo formulario</button>
+                            <button type="submit" class="btn btn-primary">📑 Cargar un nuevo formulario</button>
                         </form>
                     </div>
+                    <a href="../puntos_recoleccion/" title="VerPuntosRecoleccion"  type="button" class="btn btn-info">📌 Ver mis puntos de recolección</a> 
                 {% endif %}
             {% endif %}
         </div>

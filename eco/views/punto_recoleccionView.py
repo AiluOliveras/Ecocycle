@@ -101,3 +101,13 @@ def destroy_reciclador_punto(request, *args, **kwargs):
             return HttpResponseRedirect(request.META.get('HTTP_REFERER')) #recargo pag  base
 
     return HttpResponse("Hubo un error, por favor regrese a la página anterior.")
+
+class Punto_recoleccion_recicladorList(ListView):
+    model = Punto_recoleccion
+    paginate_by = 30
+
+    ordering = ['nombre']
+
+    def get_queryset(self):
+        reciclador= self.request.user.id
+        return Punto_recoleccion.objects.filter(recicladores__id=reciclador)
