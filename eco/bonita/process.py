@@ -26,6 +26,7 @@ class Process:
     def getProcessId(self, name):
         query = f'API/bpm/process?f=name={name}'
         response = self.access.make_request('GET', query)
+        print(response)
         process_id = response.json()[0]['id']
         return process_id
 

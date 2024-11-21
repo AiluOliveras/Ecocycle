@@ -2,12 +2,12 @@ import requests
 from http.cookiejar import CookieJar
 
 class Access:
-    username = 'walter.bates'
-    password = 'bpm'
     bonita_url = 'http://localhost:8080/bonita'
     bonita_token = ''
     
-    def __init__(self):
+    def __init__(self, username):
+        self.username = username
+        self.password = username
         # Crear un objeto CookieJar para almacenar las cookies
         self.cookie_jar = CookieJar()
         # Crear una sesión de requests y asignarle el CookieJar

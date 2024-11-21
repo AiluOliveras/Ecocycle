@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, DeleteView
 from django.views.generic.edit import CreateView, UpdateView
-from ..models import Formularios, Materiales
+from ..models import Formularios, Materiales, Procesos
 
 from django.urls import reverse
 from django.contrib import messages
@@ -83,50 +83,45 @@ def cerrar_formulario(request, *args, **kwargs):
     """
 
     formulario= request.GET.get("formulario")
-    
     if formulario:
-        # #Abro comunicación con Bonita
-        # access = Access()
-        # access.login()  # Login to get the token
-        # bonita_process = Process(access)
+        #Abro comunicación con Bonita
+        access = Access(request.user.username)
+        access.login()  # Login to get the token
+        bonita_process = Process(access)
 
         #busco el form
         formulario_up = Formularios.objects.get(id=formulario)
         #seteo el atributo
         formulario_up.abierto=False
         #guardo
-        formulario_up.save()
+        formulario_up.save()        
 
-        # #Busco el proceso y lo instancio
-        # process_id = bonita_process.getProcessId('Proceso de recolección de materiales')
-        # response = bonita_process.initiateProcess(process_id)
-        # #Me quedo con el ID de la instancia
-        # case_id = response['caseId']
-        # #Checkeo la instancia
-        # bonita_process.checkCase(case_id)
+        #Busco el proceso y lo instancio
+        process_id = bonita_process.getProcessId('Proceso de recolección de materiales')
+        response = bonita_process.initiateProcess(process_id)
+        #Me quedo con el ID de la instancia
+        case_id = response['caseId']
+        #Checkeo la instancia
+        bonita_process.checkCase(case_id)
+
+        # Crear y guardar el proceso en la base de datos
+        nuevo_proceso = Procesos(
+            iniciado_por=request.user,  # Usuario que inició el proceso
+            id_bonita=case_id,  # ID de Bonita (caseId)
+            formulario=formulario_up  # Relación con el formulario cerrado
+        )
+        nuevo_proceso.save()
         
-        # #Me traigo todos los materiales cargados en este formulario
-        # materiales = Materiales.objects.filter(formulario_id=formulario).order_by('id')
-        # variable_bonita = ""
-        # #Formateo todos los materiales como un string para mandarselo a Bonita
-        # for material in materiales:
-        #     if not variable_bonita:
-        #         variable_bonita += f"{material.tipo.nombre}: {material.cantidad}"
-        #     else:
-        #         variable_bonita += f", {material.tipo.nombre}: {material.cantidad}"
-
-        # #Seteo la variable del proceso
-        # respue = bonita_process.setVariableByCase(case_id, 'materiales_cargados', variable_bonita, 'String')
         # #Busco en que tarea me encuentro
         # task_data = bonita_process.searchActivityByCase(case_id)
 
         # #La doy por completada
-        # task_id = task_data[0]['id']  # Assuming the first task in the list
+        # task_id = task_data[0]['id'] 
         
-        # # Complete the activity => No es necesario, las tareas automaticas, en este caso guardar en la base de datos, lo hace automaticamente
-        # # Si mando esta solicitud, da como completa entrega de los materiales
-        # #respuesta = bonita_process.completeActivity(task_id)
-        # #print(f"SALIDA DEL COMPLETE ACTIVITY {respuesta}")
+        # Complete the activity => No es necesario, las tareas automaticas, en este caso guardar en la base de datos, lo hace automaticamente
+        # Si mando esta solicitud, da como completa entrega de los materiales
+        #respuesta = bonita_process.completeActivity(task_id)
+        #print(f"SALIDA DEL COMPLETE ACTIVITY {respuesta}")
         return HttpResponseRedirect('/inicio')
     
     return HttpResponse("Hubo un error, por favor regrese a la página anterior.")
