@@ -111,3 +111,26 @@ class Punto_recoleccion_recicladorList(ListView):
     def get_queryset(self):
         reciclador= self.request.user.id
         return Punto_recoleccion.objects.filter(recicladores__id=reciclador)
+
+def verificar_punto(request, *args, **kwargs):
+    """ Marca un punto de recolección como verificado.
+
+    Args:
+        punto: id del punto de recolección a verificar
+
+    """
+
+    if request.user.is_staff:
+        punto= request.GET.get("punto")
+
+        if punto:
+
+            punto_up = Punto_recoleccion.objects.get(id=punto)
+            punto_up.verificado = True
+            punto_up.save()
+
+            messages.success(request,('Punto verificado exitosamente!'))
+            
+            return HttpResponseRedirect('/punto_recoleccion/listar/')
+    
+    return HttpResponse("Hubo un error, por favor regrese a la página anterior.")
