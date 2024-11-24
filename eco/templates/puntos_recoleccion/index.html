@@ -49,7 +49,13 @@
                         <td>{{ unpunto.nombre }}</td>
                         <td>{{ unpunto.direccion}}</td>
                         <td>
+                            {% if unpunto.verificado %}
+                            <button type="button" class="btn btn-success" style="margin-left: 20px;" disabled>Verificado</button>
                             <a href="recicladores?punto={{unpunto.id}}" title="Recicladores" type="button" class="btn btn-secondary" style="margin-left: 20px;" >Ver recicladores</a>
+                            {% else %}
+                                <a href="../listar/verificar/?punto={{unpunto.id}}" title="Verificar" type="button" class="btn btn-primary" style="margin-left: 20px;" >Verificar</a>
+                            {% endif %}
+                            
                         </td>
                     </tr>
 

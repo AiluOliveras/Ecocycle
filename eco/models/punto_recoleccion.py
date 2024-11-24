@@ -11,5 +11,6 @@ class Punto_recoleccion(models.Model):
 
     nombre = models.CharField(max_length=100)
     direccion = models.CharField(max_length=255)
+    verificado = models.BooleanField(default=False) # El empleado los verifica
 
     recicladores = models.ManyToManyField(User)

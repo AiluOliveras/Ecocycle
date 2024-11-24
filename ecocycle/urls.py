@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from eco.views import MaterialesCreate, FormulariosDetail, FormulariosCreate, cerrar_formulario, OrdenesList, OrdenReservaUpdate, OrdenEntregaUpdate, PuntoMaterialRegistro,Punto_recoleccionCreate,Punto_recoleccionList,UsuariosList
 from eco.views import RecicladoresList, destroy_reciclador_punto,create_reciclador_punto, Punto_recoleccion_recicladorList, Materiales_RecibidosCreate
+from eco.views import verificar_punto
 from django.contrib.auth.views import LoginView, LogoutView
 
 from rest_framework_simplejwt.views import (
@@ -38,6 +39,7 @@ urlpatterns = [
     path('punto_recoleccion/agregar/', Punto_recoleccionCreate.as_view(template_name = "puntos_recoleccion/create.html")),
     path('punto_recoleccion/listar/recicladores/', RecicladoresList.as_view(template_name = "recicladores/index.html"), name='recicladores'),
     path('punto_recoleccion/listar/recicladores/borrado',destroy_reciclador_punto),
+    path('punto_recoleccion/listar/verificar/',verificar_punto),
     path('puntos_recoleccion/',Punto_recoleccion_recicladorList.as_view(template_name = "puntos_recoleccion/index.html")),
 
     path('recicladores/agregar', UsuariosList.as_view(template_name = "puntos_recoleccion/anidate.html"), name='anidate'),
