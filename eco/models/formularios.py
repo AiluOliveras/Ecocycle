@@ -12,3 +12,5 @@ class Formularios(models.Model):
     abierto= models.BooleanField(default=True, blank=True)
 
     reciclador=models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+
+    informe = models.OneToOneField('Informes',null=True,on_delete=models.SET_NULL)
