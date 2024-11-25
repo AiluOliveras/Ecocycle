@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, DeleteView
 from django.views.generic.edit import CreateView, UpdateView
-from ..models import Formularios, Materiales, Informes
+from ..models import Formularios, Materiales, Informes, Stock
 
 from django.urls import reverse
 from django.contrib import messages
@@ -130,6 +130,20 @@ def cerrar_formulario(request, *args, **kwargs):
     
     return HttpResponse("Hubo un error, por favor regrese a la página anterior.")
 
+def actualizar_stock(id_tipo,cantidad_agregada):
+
+    try:
+        stock=Stock.objects.get(tipo_material_id=id_tipo)
+    except Stock.DoesNotExist:
+        Stock.objects.create(tipo_material_id=id_tipo,cantidad=cantidad_agregada)
+        return True
+    
+    #existe el tipo en la bd, sumo cantidades
+    stock.cantidad= stock.cantidad+cantidad_agregada
+    stock.save()
+
+    return True
+
 def procesar_diferencias_formulario(request, *args, **kwargs):
     """ Procesa diferencias entre los materiales cargados por el reciclador y el empleado.
 
@@ -159,6 +173,9 @@ def procesar_diferencias_formulario(request, *args, **kwargs):
                 total_material=0 #total de cada material cargado
                 tipo_mats_recibidos.append(material_r.tipo_id)
                 pago_total=pago_total+(material_r.cantidad * material_r.tipo.precio_por_kg)
+
+                #ACTUALIZA STOCK
+                actualizar_stock(material_r.tipo_id,material_r.cantidad)
 
                 for material_c in materiales_cargados:
                     if material_c.tipo_id == material_r.tipo_id:
@@ -200,7 +217,7 @@ def procesar_diferencias_formulario(request, *args, **kwargs):
             #guardo en db  
             nuevo_informe=Informes.objects.create(cant_materiales_fallidos=materiales_faltantes,kg_faltantes_total=kg_faltantes_total,cant_materiales_exitosos=materiales_exitosos,cant_mats_no_recibidos=len(mats_no_recibidos),monto_pagado=pago_total)          
             form.informe_id=nuevo_informe.id #conecto formulario a informe
-            form.save()               
+            form.save()        
             
             messages.success(request,('Procesado exitosamente!'))
             
