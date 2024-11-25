@@ -6,3 +6,6 @@ class Tiposmateriales(models.Model):
     """
 
     nombre = models.CharField(max_length=100)
+
+    #campo para la APP unicamente
+    precio_por_kg = models.DecimalField(max_digits=20, decimal_places=2, null=False, default=20)

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, DeleteView
 from django.views.generic.edit import CreateView, UpdateView
-from ..models import Formularios, Materiales, Procesos
+from ..models import Formularios, Materiales, Procesos, Informes
 
 from django.urls import reverse
 from django.contrib import messages
@@ -123,5 +123,83 @@ def cerrar_formulario(request, *args, **kwargs):
         #respuesta = bonita_process.completeActivity(task_id)
         #print(f"SALIDA DEL COMPLETE ACTIVITY {respuesta}")
         return HttpResponseRedirect('/inicio')
+    
+    return HttpResponse("Hubo un error, por favor regrese a la página anterior.")
+
+def procesar_diferencias_formulario(request, *args, **kwargs):
+    """ Procesa diferencias entre los materiales cargados por el reciclador y el empleado.
+
+    Args:
+        formulario_id: id del formulario a procesar
+
+    """
+
+    if request.user.is_staff:
+        formulario_id= request.GET.get("formulario_id")
+        
+        #variables de bi
+        materiales_faltantes=0 #materiales faltantes o que trajo menos cantidad (total tipos material)
+        kg_faltantes_total=0 #cantidades de kg de material faltante
+        materiales_exitosos=0 #cumplio cantidades
+        tipo_mats_recibidos=[]
+        pago_total=0
+
+        if formulario_id:
+
+            form = Formularios.objects.get(id=formulario_id)
+            materiales_cargados = Materiales.objects.filter(formulario_id=formulario_id,material_recibido=False)
+            materiales_recibidos = Materiales.objects.filter(formulario_id=formulario_id,material_recibido=True)
+
+            for material_r in materiales_recibidos:
+                #busco su equivalente en cargados
+                total_material=0 #total de cada material cargado
+                tipo_mats_recibidos.append(material_r.tipo_id)
+                pago_total=pago_total+(material_r.cantidad * material_r.tipo.precio_por_kg)
+
+                for material_c in materiales_cargados:
+                    if material_c.tipo_id == material_r.tipo_id:
+                        #es el mismo material
+                        total_material=total_material+material_c.cantidad #sumo cantidad de ese material
+                
+                if material_r.cantidad < total_material:
+                    #si la cantidad total de material recibido es MENOR al material cargado
+
+                    #registro error
+                    kg_faltantes_total=kg_faltantes_total+(total_material-material_r.cantidad)
+                    materiales_faltantes=materiales_faltantes+1
+
+                else:
+                    #trajo la misma o mas cantidad
+                    materiales_exitosos=materiales_exitosos+1
+
+            #verifico que materiales cargo y no recibi
+            mats_no_recibidos = (Materiales.objects.filter(formulario_id=formulario_id,material_recibido=False)).exclude(tipo_id__in=tipo_mats_recibidos)
+            tipo_mats_no_recibidos= []
+
+            if mats_no_recibidos:
+                #faltan materiales
+                for m in mats_no_recibidos:
+
+                    #si no existe en tipo_mats_no_recibidos
+                    if m.tipo_id not in tipo_mats_no_recibidos:
+                        #lo agrego
+                        tipo_mats_no_recibidos.append(m.tipo_id)
+                        kg_faltantes_total=kg_faltantes_total+m.cantidad #cuento los kg del material no traido, al total
+                        materiales_faltantes=materiales_faltantes+1
+
+            #termino comparaciones
+            # print('materiales faltantes/fallidos (en total):'+str(materiales_faltantes))
+            # print('kg faltantes:'+str(kg_faltantes_total))
+            # print('mats exitosos:'+str(materiales_exitosos))
+            # print('mats no recibidos (faltan por completo):'+str(len(mats_no_recibidos)))
+
+            #guardo en db  
+            nuevo_informe=Informes.objects.create(cant_materiales_fallidos=materiales_faltantes,kg_faltantes_total=kg_faltantes_total,cant_materiales_exitosos=materiales_exitosos,cant_mats_no_recibidos=len(mats_no_recibidos),monto_pagado=pago_total)          
+            form.informe_id=nuevo_informe.id #conecto formulario a informe
+            form.save()               
+            
+            messages.success(request,('Procesado exitosamente!'))
+            
+            return HttpResponseRedirect('/formularios/detalle/'+str(formulario_id))
     
     return HttpResponse("Hubo un error, por favor regrese a la página anterior.")

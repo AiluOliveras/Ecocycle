@@ -46,7 +46,19 @@ class Materiales_RecibidosCreate(PermissionRequiredMixin, SuccessMessageMixin, C
 
     def get_context_data(self, **kwargs):
         context = super(Materiales_RecibidosCreate, self).get_context_data(**kwargs) # GET de la data default del contexto
-        context['tiposmateriales'] = Tiposmateriales.objects.all() # Agrego listado de tipos al contexto
+        form_id=self.request.GET.get('form_id', None) #get id de la url
+        if form_id:
+            #obtengo materiales recibidos
+            mats=Materiales.objects.filter(formulario_id=form_id,material_recibido=True)
+
+            tipo_mats_cargados=[] #lista de tipos de materiales cargados
+            for mat in mats:
+                tipo_mats_cargados.append(mat.tipo_id)
+
+            #retorno materiales que faltan cargar
+            context['tiposmateriales'] = Tiposmateriales.objects.exclude(id__in=tipo_mats_cargados)
+        else:
+            context['tiposmateriales'] = Tiposmateriales.objects.all() # Agrego listado de tipos al contexto
         return context
 
     def form_valid(self, form):
