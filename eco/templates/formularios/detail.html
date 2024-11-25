@@ -63,12 +63,17 @@
                     {% endif %}
                 {% else %} <!-- form cerrado -->
                     {% if user.is_staff %}
-                        {% if not object.informe%}
+                        {% if not object.informe %}
                         <a href="/materiales/verificar?form_id={{ object.id }}" class="btn btn-info" style="margin-bottom: 2%;">📝 Cargar materiales recibidos en mostrador</a>
                         <a href="/formularios/procesar?formulario_id={{ object.id }}" class="btn btn-info" style="margin-bottom: 2%;">↪️ Procesar diferencias</a>
                         {% else %} <!-- tiene informe generado -->
                             <p><span style="font-weight:bold;margin-top: 3%;">-------- Monto a pagar: --------</span><br> $ {{ object.informe.monto_pagado }}</p>
-                            <button class="btn btn-info" disabled >Procesado</button>
+                            <button class="btn btn-success" disabled >↪️ Procesado</button>
+                            {% if not object.informe.pagado %}
+                                <a href="../pagar?formulario_id={{ object.id }}" class="btn btn-info">💳 Marcar como pagado</a>
+                            {% else %} <!-- pagado -->
+                                <button class="btn btn-success" disabled >💳 Pagado</button>
+                            {% endif %}
                         {% endif %}
                     {% endif %}
                 {% endif %}
