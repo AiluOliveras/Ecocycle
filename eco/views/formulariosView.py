@@ -19,7 +19,26 @@ class FormulariosDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(FormulariosDetail, self).get_context_data(**kwargs) # GET de la data default del contexto
-        
+         #Busco el proceso para saber el estado y para obtener el número de caso en Bonita
+        proceso = Procesos.objects.get(formulario=self.kwargs['pk'])
+        if proceso.estado == "cerrado":
+            #Abro comunicación con Bonita
+            access = Access(self.request.user.username)
+            access.login()  # Login to get the token
+            bonita_process = Process(access)
+
+            #Busco en que tarea me encuentro, para este punto deberia estar en Notificar al recolector de la paga a recibir
+            task_data = bonita_process.searchActivityByCase(proceso.id_bonita)
+            print(f"DATA DE LA TAREA {task_data}")
+            #La doy por completada
+            task_id = task_data[0]['id']             
+            respuesta = bonita_process.completeActivity(task_id)
+            print(f"SALIDA DEL COMPLETE ACTIVITY {respuesta}")
+
+            #Pongo el estado del proceso como entregado
+            proceso.estado = 'notificado'
+            proceso.save()
+
         #agregamos su listado de materiales ya cargados al context
         context['materiales'] = Materiales.objects.filter(formulario_id=(self.kwargs['pk']),material_recibido=False).order_by('id')
 
@@ -111,16 +130,6 @@ def cerrar_formulario(request, *args, **kwargs):
         )
         nuevo_proceso.save()
         
-        # #Busco en que tarea me encuentro
-        # task_data = bonita_process.searchActivityByCase(case_id)
-
-        # #La doy por completada
-        # task_id = task_data[0]['id'] 
-        
-        # Complete the activity => No es necesario, las tareas automaticas, en este caso guardar en la base de datos, lo hace automaticamente
-        # Si mando esta solicitud, da como completa entrega de los materiales
-        #respuesta = bonita_process.completeActivity(task_id)
-        #print(f"SALIDA DEL COMPLETE ACTIVITY {respuesta}")
         return HttpResponseRedirect('/inicio')
     
     return HttpResponse("Hubo un error, por favor regrese a la página anterior.")
@@ -158,10 +167,27 @@ def procesar_diferencias_formulario(request, *args, **kwargs):
         pago_total=0
 
         if formulario_id:
+            #Abro comunicación con Bonita
+            access = Access(request.user.username)
+            access.login()  # Login to get the token
+            bonita_process = Process(access)
+
+            #Busco el proceso para obtener el número de caso en Bonita
+            proceso = Procesos.objects.get(formulario=formulario_id)
 
             form = Formularios.objects.get(id=formulario_id)
             materiales_cargados = Materiales.objects.filter(formulario_id=formulario_id,material_recibido=False)
             materiales_recibidos = Materiales.objects.filter(formulario_id=formulario_id,material_recibido=True)
+
+            # #Busco en que tarea me encuentro, para este punto deberia estar en Carga los materiales en un formulario del sistema
+            task_data = bonita_process.searchActivityByCase(proceso.id_bonita)
+            print(f"DATA DE LA TAREA {task_data}")
+            # #La doy por completada
+            task_id = task_data[0]['id']             
+            respuesta = bonita_process.completeActivity(task_id)
+            print(f"SALIDA DEL COMPLETE ACTIVITY {respuesta}")
+            proceso.estado = 'cerrado'
+            proceso.save()
 
             for material_r in materiales_recibidos:
                 #busco su equivalente en cargados

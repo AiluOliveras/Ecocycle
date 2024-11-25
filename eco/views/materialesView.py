@@ -4,7 +4,7 @@ from django.views.generic.edit import CreateView, UpdateView
 
 from eco.bonita.access import Access
 from eco.bonita.process import Process
-from ..models import Materiales,Tiposmateriales,Formularios
+from ..models import Materiales,Tiposmateriales,Formularios, Procesos
 
 from django.urls import reverse
 from django.contrib import messages
@@ -50,10 +50,30 @@ class Materiales_RecibidosCreate(PermissionRequiredMixin, SuccessMessageMixin, C
         if form_id:
             #obtengo materiales recibidos
             mats=Materiales.objects.filter(formulario_id=form_id,material_recibido=True)
-
+            
             tipo_mats_cargados=[] #lista de tipos de materiales cargados
             for mat in mats:
                 tipo_mats_cargados.append(mat.tipo_id)
+            
+            #Busco el proceso para saber el estado y para obtener el número de caso en Bonita
+            proceso = Procesos.objects.get(formulario=form_id)
+            if proceso.estado == "cargado":
+                #Abro comunicación con Bonita
+                access = Access(self.request.user.username)
+                access.login()  # Login to get the token
+                bonita_process = Process(access)
+
+                #Busco en que tarea me encuentro, para este punto deberia estar en Entrega de los materiales
+                task_data = bonita_process.searchActivityByCase(proceso.id_bonita)
+                print(f"DATA DE LA TAREA {task_data}")
+                #La doy por completada
+                task_id = task_data[0]['id']             
+                respuesta = bonita_process.completeActivity(task_id)
+                print(f"SALIDA DEL COMPLETE ACTIVITY {respuesta}")
+
+                #Pongo el estado del proceso como entregado
+                proceso.estado = 'entregado'
+                proceso.save()
 
             #retorno materiales que faltan cargar
             context['tiposmateriales'] = Tiposmateriales.objects.exclude(id__in=tipo_mats_cargados)
@@ -68,6 +88,26 @@ class Materiales_RecibidosCreate(PermissionRequiredMixin, SuccessMessageMixin, C
         #Agregamos el material al formulario semanal.
         form_id=self.request.GET.get('form_id', None) #get id de la url
         if (form_id):
+            #Busco el proceso para saber el estado y para obtener el número de caso en Bonita
+            proceso = Procesos.objects.get(formulario=form_id)
+            if proceso.estado == "entregado":
+                #Abro comunicación con Bonita
+                access = Access(self.request.user.username)
+                access.login()  # Login to get the token
+                bonita_process = Process(access)
+
+                #Busco en que tarea me encuentro, para este punto deberia estar en Recibir y revisar materiales
+                task_data = bonita_process.searchActivityByCase(proceso.id_bonita)
+                print(f"DATA DE LA TAREA {task_data}")
+                #La doy por completada
+                task_id = task_data[0]['id']             
+                respuesta = bonita_process.completeActivity(task_id)
+                print(f"SALIDA DEL COMPLETE ACTIVITY {respuesta}")
+
+                #Pongo el estado del proceso como entregado
+                proceso.estado = 'recibido'
+                proceso.save()
+
             self.object.formulario_id=form_id
             self.object.material_recibido=True
 

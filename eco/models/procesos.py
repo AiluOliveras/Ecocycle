@@ -15,3 +15,25 @@ class Procesos(models.Model):
     id_bonita = models.IntegerField(blank=False)
 
     formulario = models.ForeignKey('Formularios', on_delete=models.CASCADE)
+
+    CARGADO = 'cargado'
+    ENTREGADO = 'entregado'
+    RECIBIDO = 'recibido'
+    CERRADO = 'cerrado'
+    NOTIFICADO = 'notificado'
+    PAGADO = 'pagado'
+
+    ESTADO_CHOICES = [
+        (CARGADO, 'Cargado'),
+        (ENTREGADO, 'Entregado'),
+        (RECIBIDO, 'Recibido'),
+        (CERRADO, 'Cerrado'),
+        (NOTIFICADO, 'Notificado'),
+        (PAGADO, 'Pagado')
+    ]
+
+    estado = models.CharField(
+        max_length=10, 
+        choices=ESTADO_CHOICES, 
+        default=CARGADO
+    )
