@@ -15,3 +15,4 @@ class Informes(models.Model):
     cant_mats_no_recibidos=models.IntegerField()
 
     monto_pagado=models.DecimalField(max_digits=20, decimal_places=2, null=False, default=0)
+    pagado= models.BooleanField(default=False, blank=True)
