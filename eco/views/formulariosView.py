@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, DeleteView
 from django.views.generic.edit import CreateView, UpdateView
-from ..models import Formularios, Materiales, Procesos, Informes, Stock
+from ..models import Formularios, Materiales, Procesos, Informes, Stock, Evaluacion
 
 from django.urls import reverse
 from django.contrib import messages
@@ -13,6 +13,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 
 from eco.bonita.access import Access
 from eco.bonita.process import Process
+from datetime import datetime, timedelta
 
 class FormulariosDetail(DetailView):
     model = Formularios
@@ -71,12 +72,41 @@ class FormulariosCreate(PermissionRequiredMixin, SuccessMessageMixin, CreateView
                 
                 context['ultimos_formularios'] = Formularios.objects.filter(abierto=False).order_by('-id')[:10]
 
+            ##AÑADO EVALUACION AL CONTEXT - empleado
+            fecha_hoy = datetime.now()
+            #fecha dos semanas atras
+            fecha_dos_semanas = fecha_hoy - timedelta(weeks=2)
+            
+            #por cada busco evaluac en el periodo, asigno evaluacion_id
+            try:
+                evaluacion=Evaluacion.objects.latest('id')
+            except Evaluacion.DoesNotExist:
+                evaluacion=None
+
+            if evaluacion:
+                context['evaluacion'] = evaluacion
+
         else:
             #es reciclador
             try:
                 context['ultimo_formulario'] = Formularios.objects.filter(abierto=True,reciclador_id=self.request.user.id).latest('id') # Trae el último form creado
             except Formularios.DoesNotExist:
                 context['ultimo_formulario'] = None
+
+            ##AÑADO EVALUACION AL CONTEXT - reciclador
+            fecha_hoy = datetime.now()
+            #fecha dos semanas atras
+            fecha_dos_semanas = fecha_hoy - timedelta(weeks=2)
+            
+            #por cada busco evaluac en el periodo, asigno evaluacion_id
+            try:
+                evaluacion=Evaluacion.objects.latest('id')
+            except Evaluacion.DoesNotExist:
+                evaluacion=None
+
+            if evaluacion:
+                context['evaluacion'] = evaluacion
+
         return context
 
     def form_valid(self, form):

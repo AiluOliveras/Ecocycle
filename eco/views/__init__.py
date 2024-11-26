@@ -8,3 +8,4 @@ from .usuariosView import UsuariosList
 from .recicladoresView import RecicladoresList
 from .informesView import marcar_informe_pagado
 from .bonitaView import ConsultaBonita
+from .evaluacionView import hacer_evaluacion,EvaluacionDetail

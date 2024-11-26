@@ -32,6 +32,8 @@ urlpatterns = [
     path('home/', LoginView.as_view()),
     
     path('inicio/', FormulariosCreate.as_view(template_name = "formularios/create.html"),name='inicio'),
+    path('evaluar/', hacer_evaluacion),
+    path('evaluar/<int:pk>', EvaluacionDetail.as_view(template_name = "evaluacion/detail.html"),name='evaluacion/detail'),
     path('formularios/pagar',marcar_informe_pagado),
     path('formularios/detalle/<int:pk>', FormulariosDetail.as_view(template_name = "formularios/detail.html"),name='formularios/detalle'),
     path('formularios/cerrar',cerrar_formulario),

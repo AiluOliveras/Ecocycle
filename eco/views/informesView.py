@@ -65,3 +65,4 @@ def marcar_informe_pagado(request, *args, **kwargs):
             return HttpResponseRedirect('/formularios/detalle/'+str(formulario_id))
     
     return HttpResponse("Hubo un error, por favor regrese a la página anterior.")
+
