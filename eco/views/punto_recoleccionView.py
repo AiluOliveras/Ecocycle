@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, DeleteView
 from django.views.generic.edit import CreateView, UpdateView
-from ..models import Punto_recoleccion
+from ..models import Punto_recoleccion, Punto_proceso
 from django.contrib.auth.models import User
 
 from django.urls import reverse
@@ -22,6 +22,32 @@ class Punto_recoleccionCreate(PermissionRequiredMixin, SuccessMessageMixin, Crea
     
     def get_success_url(self):
         return reverse('inicio')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        
+        # Acceder a la instancia recién creada
+        punto_creado = self.object
+        
+        #Abro comunicación con Bonita
+        access = Access(self.request.user.username)
+        access.login()  # Login to get the token
+        bonita_process = Process(access)
+
+        #Busco el proceso y lo instancio
+        process_id = bonita_process.getProcessId('Proceso de alta de un nuevo punto de recolección')
+        proceso_iniciado = bonita_process.initiateProcess(process_id)
+        #Me quedo con el ID de la instancia
+        case_id = proceso_iniciado['caseId']
+        # Crear y guardar el proceso en la base de datos
+        nuevo_proceso = Punto_proceso(
+            iniciado_por=self.request.user,  # Usuario que inició el proceso
+            id_bonita=case_id,  # ID de Bonita (caseId)
+            punto=punto_creado  # Relación con el formulario cerrado
+        )
+        nuevo_proceso.save()
+
+        return response
 
 class Punto_recoleccionList(ListView):
     model = Punto_recoleccion
@@ -128,6 +154,28 @@ def verificar_punto(request, *args, **kwargs):
             punto_up = Punto_recoleccion.objects.get(id=punto)
             punto_up.verificado = True
             punto_up.save()
+
+            #Abro comunicación con Bonita
+            access = Access(request.user.username)
+            access.login()  # Login to get the token
+            bonita_process = Process(access)
+
+            #Busco el punto para obtener el número de caso en Bonita
+            proceso = Punto_proceso.objects.get(punto=punto)
+
+            # #Busco en que tarea me encuentro, para este punto deberia estar en Recibe y chequea el alta de un nuevo punto de recoleccion
+            task_data = bonita_process.searchActivityByCase(proceso.id_bonita)
+            print(f"DATA DE LA TAREA {task_data}")
+            case_id = task_data[0]['caseId']
+            print("CASE ID", case_id)
+            #Seteo la variable del proceso
+            respuesta = bonita_process.setVariableByCase(case_id, 'aprueba', "true", 'Boolean')
+            print("Respuesta de setVariableByCase:", respuesta)
+            #La doy por completada
+            task_id = task_data[0]['id']             
+            respuesta = bonita_process.completeActivity(task_id)
+            print(f"SALIDA DEL COMPLETE ACTIVITY {respuesta}")
+
 
             messages.success(request,('Punto verificado exitosamente!'))
             

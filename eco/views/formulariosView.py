@@ -129,6 +129,18 @@ def cerrar_formulario(request, *args, **kwargs):
             formulario=formulario_up  # Relación con el formulario cerrado
         )
         nuevo_proceso.save()
+
+        #Busco en que tarea me encuentro, para este punto deberia estar en Entrega de los materiales
+        task_data = bonita_process.searchActivityByCase(nuevo_proceso.id_bonita)
+        print(f"DATA DE LA TAREA {task_data}")
+        #La doy por completada
+        task_id = task_data[0]['id']             
+        respuesta = bonita_process.completeActivity(task_id)
+        print(f"SALIDA DEL COMPLETE ACTIVITY {respuesta}")
+
+        #Pongo el estado del proceso como entregado
+        nuevo_proceso.estado = 'entregado'
+        nuevo_proceso.save()
         
         return HttpResponseRedirect('/inicio')
     

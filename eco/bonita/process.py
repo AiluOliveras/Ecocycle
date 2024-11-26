@@ -44,9 +44,9 @@ class Process:
 
     def setVariable(self, taskId, variable, valor, tipo):
         task_response = self.access.make_request('GET', f'API/bpm/userTask/{taskId}')
-        caseId = task_response.json()['data']['caseId']
-        response = self.access.make_request('PUT', f'API/bpm/caseVariable/{caseId}/{variable}', json={variable: valor, 'type': tipo})
-        return response.json()
+        caseId = task_response.json()['caseId']
+        response = self.access.make_request('PUT', f'API/bpm/caseVariable/{caseId}/{variable}', json={"value": valor, 'type': f"java.lang.{tipo}"})
+        return response
 
     def setVariableByCase(self, caseId, variable, valor, tipo):
         # en caso de que sea decimal lo cambio a float (decimal da error)

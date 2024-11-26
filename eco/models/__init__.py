@@ -7,3 +7,4 @@ from .punto_recoleccion import Punto_recoleccion
 from .procesos import Procesos
 from .informes import Informes
 from .stock import Stock
+from .punto_procesos import Punto_proceso
