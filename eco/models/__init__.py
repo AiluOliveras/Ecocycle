@@ -6,3 +6,4 @@ from .puntos import Puntos
 from .punto_recoleccion import Punto_recoleccion
 from .informes import Informes
 from .stock import Stock
+from .evaluacion import Evaluacion

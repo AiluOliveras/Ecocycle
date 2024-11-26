@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from eco.views import MaterialesCreate, FormulariosDetail, FormulariosCreate, cerrar_formulario, bonita, OrdenesList, OrdenReservaUpdate, OrdenEntregaUpdate, PuntoMaterialRegistro,Punto_recoleccionCreate,Punto_recoleccionList,UsuariosList
 from eco.views import RecicladoresList, destroy_reciclador_punto,create_reciclador_punto, Punto_recoleccion_recicladorList, Materiales_RecibidosCreate
-from eco.views import verificar_punto, procesar_diferencias_formulario, marcar_informe_pagado
+from eco.views import verificar_punto, procesar_diferencias_formulario, marcar_informe_pagado, hacer_evaluacion, EvaluacionDetail
 from django.contrib.auth.views import LoginView, LogoutView
 
 from rest_framework_simplejwt.views import (
@@ -32,6 +32,8 @@ urlpatterns = [
     path("bonita", bonita, name="bonita"),
     
     path('inicio/', FormulariosCreate.as_view(template_name = "formularios/create.html"),name='inicio'),
+    path('evaluar/', hacer_evaluacion),
+    path('evaluar/<int:pk>', EvaluacionDetail.as_view(template_name = "evaluacion/detail.html"),name='evaluacion/detail'),
     path('formularios/pagar',marcar_informe_pagado),
     path('formularios/detalle/<int:pk>', FormulariosDetail.as_view(template_name = "formularios/detail.html"),name='formularios/detalle'),
     path('formularios/cerrar',cerrar_formulario),

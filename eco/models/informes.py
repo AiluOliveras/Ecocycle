@@ -16,3 +16,6 @@ class Informes(models.Model):
 
     monto_pagado=models.DecimalField(max_digits=20, decimal_places=2, null=False, default=0)
     pagado= models.BooleanField(default=False, blank=True)
+
+
+    evaluacion= models.ForeignKey('Evaluacion', on_delete=models.SET_NULL,null=True) #id de su evaluacion, si tiene
