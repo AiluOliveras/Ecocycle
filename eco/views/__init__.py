@@ -9,3 +9,4 @@ from .recicladoresView import RecicladoresList
 from .informesView import marcar_informe_pagado
 from .bonitaView import ConsultaBonita
 from .evaluacionView import hacer_evaluacion,EvaluacionDetail
+from .solicitantesView import SolicitantesCreate,SolicitantesList, SolicitantesDelete, create_reciclador

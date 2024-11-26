@@ -1,0 +1,51 @@
+<html>
+    <head>
+        {# Cargamos libreria bootstrap #}
+        {% load bootstrap4 %}
+        {# Cargamos bootstrap css #}
+        {% bootstrap_css %}
+        {# Archivos #}
+        {% load static %}
+    </head>
+
+    <body style="background-color:#b0ccf1;border-radius: 25px;margin-top: 10px;">
+        {# JS y jquery bootstrap #}
+        {% bootstrap_javascript jquery='full' %}
+        {# Widget Tweaks carga las cajas de texto #}
+        {% load widget_tweaks %}
+
+        <div style="margin-top: 5%;margin-right: 25%;margin-left: 25%;background-color:white;border-radius: 25px; padding: 20px;">
+            <h4 class="text-center" style="font-weight:bold;">Registro de recolectores</h4>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="cantidad" style="font-weight:bold;">Nombre</label>
+                    {{ form.nombre|add_class:"form-control" }} 
+                </div>
+
+                <div class="form-group">
+                    <label for="cantidad" style="font-weight:bold;">Apellido</label>
+                    {{ form.apellido|add_class:"form-control" }} 
+                </div>
+
+                <div class="form-group">
+                    <label for="cantidad" style="font-weight:bold;">Nombre de usuario (sin espacios)</label>
+                    {{ form.username|add_class:"form-control" }} 
+                </div>
+
+                <div class="form-group">
+                    <label for="cantidad" style="font-weight:bold;">Email</label>
+                    {{ form.email|add_class:"form-control" }} 
+                </div>
+
+
+                <div class="text-center">
+                    <h6 class="text-center" style="margin-top: 4%;margin-bottom: 4%;color: red;">❗ Una vez enviada la solicitud, espera a que un supervisor la revise y la apruebe.</h6>
+                    <button type="submit" class="btn btn-primary">📨 Enviar</button>
+                    <a href="/inicio" class="btn btn-danger">Volver al login</a>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>

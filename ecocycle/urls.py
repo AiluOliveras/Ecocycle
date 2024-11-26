@@ -19,6 +19,7 @@ from eco.views import MaterialesCreate, FormulariosDetail, FormulariosCreate, ce
 from eco.views import RecicladoresList, destroy_reciclador_punto,create_reciclador_punto, Punto_recoleccion_recicladorList, Materiales_RecibidosCreate
 from eco.views import verificar_punto, procesar_diferencias_formulario, marcar_informe_pagado
 from eco.views import ConsultaBonita
+from eco.views import SolicitantesCreate, SolicitantesList, SolicitantesDelete, create_reciclador
 from django.contrib.auth.views import LoginView, LogoutView
 
 from rest_framework_simplejwt.views import (
@@ -32,6 +33,7 @@ urlpatterns = [
     path('home/', LoginView.as_view()),
     
     path('inicio/', FormulariosCreate.as_view(template_name = "formularios/create.html"),name='inicio'),
+    path('iniciar_solicitud/', SolicitantesCreate.as_view(template_name = "solicitantes/create.html"),name='iniciar_solicitud'),
     path('evaluar/', hacer_evaluacion),
     path('evaluar/<int:pk>', EvaluacionDetail.as_view(template_name = "evaluacion/detail.html"),name='evaluacion/detail'),
     path('formularios/pagar',marcar_informe_pagado),
@@ -49,6 +51,10 @@ urlpatterns = [
 
     path('recicladores/agregar', UsuariosList.as_view(template_name = "puntos_recoleccion/anidate.html"), name='anidate'),
     path('recicladores/crear',create_reciclador_punto), #pivot e/ reciclador y punto
+
+    path ('solicitudes/',SolicitantesList.as_view(template_name = "solicitantes/index.html"), name='solicitantes'),
+    path ('solicitudes/rechazar/<int:pk>',SolicitantesDelete.as_view()),
+    path ('solicitudes/aprobar/<int:pk>',create_reciclador),
 
     path('accounts/login/',LoginView.as_view()),
     path('accounts/logout/',LogoutView.as_view(), name='logout'),

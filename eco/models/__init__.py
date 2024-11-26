@@ -9,3 +9,4 @@ from .informes import Informes
 from .stock import Stock
 from .punto_procesos import Punto_proceso
 from .evaluacion import Evaluacion
+from .solicitantes import Solicitantes
