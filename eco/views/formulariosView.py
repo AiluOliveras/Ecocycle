@@ -146,7 +146,7 @@ def cerrar_formulario(request, *args, **kwargs):
     
     return HttpResponse("Hubo un error, por favor regrese a la página anterior.")
 
-def actualizar_stock(id_tipo,cantidad_agregada):
+def actualizar_stock(id_tipo,cantidad_agregada): #actualiza el stock sumando la cantidad enviada por parametro
 
     try:
         stock=Stock.objects.get(tipo_material_id=id_tipo)
@@ -159,6 +159,29 @@ def actualizar_stock(id_tipo,cantidad_agregada):
     stock.save()
 
     return True
+
+def reservar_stock(id_tipo,cantidad_reservada): #actualiza el stock restando la cantidad enviada por parametro
+
+    try:
+        stock=Stock.objects.get(tipo_material_id=id_tipo)
+    except Stock.DoesNotExist:
+        Stock.objects.create(tipo_material_id=id_tipo,cantidad=cantidad_reservada)
+        return True
+    
+    #existe el tipo en la bd, resto cantidades
+    stock.cantidad= stock.cantidad-cantidad_reservada
+    stock.save()
+
+    return True
+
+def consultar_stock(id_tipo): #recibe un id y retorna el stock que hay de ese tipo_material. Si no hay existencias del material enviado, retorna None.
+
+    try:
+        stock=Stock.objects.get(tipo_material_id=id_tipo)
+    except Stock.DoesNotExist:
+        return None
+
+    return stock.cantidad
 
 def procesar_diferencias_formulario(request, *args, **kwargs):
     """ Procesa diferencias entre los materiales cargados por el reciclador y el empleado.
@@ -250,7 +273,13 @@ def procesar_diferencias_formulario(request, *args, **kwargs):
             #guardo en db  
             nuevo_informe=Informes.objects.create(cant_materiales_fallidos=materiales_faltantes,kg_faltantes_total=kg_faltantes_total,cant_materiales_exitosos=materiales_exitosos,cant_mats_no_recibidos=len(mats_no_recibidos),monto_pagado=pago_total)          
             form.informe_id=nuevo_informe.id #conecto formulario a informe
-            form.save()        
+            form.save()
+
+            ##LLAMADO A BONITA !!!!!!!!!!!!!!!!
+            ##COMPUERTA / Consulta api
+            #Utilizar consultas: actualizar_stock , reservar_stock y consultar_stock en este mismo file
+            #ejemplo de llamada: actualizar_stock(material.tipo_id,material.cantidad)
+            #mas info en el encabezado de cada función
             
             messages.success(request,('Procesado exitosamente!'))
             
