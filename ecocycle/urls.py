@@ -18,6 +18,7 @@ from django.urls import path, include
 from eco.views import MaterialesCreate, FormulariosDetail, FormulariosCreate, cerrar_formulario, OrdenesList, OrdenReservaUpdate, OrdenEntregaUpdate, PuntoMaterialRegistro,Punto_recoleccionCreate,Punto_recoleccionList,UsuariosList
 from eco.views import RecicladoresList, destroy_reciclador_punto,create_reciclador_punto, Punto_recoleccion_recicladorList, Materiales_RecibidosCreate
 from eco.views import verificar_punto, procesar_diferencias_formulario, marcar_informe_pagado
+from eco.views import ConsultaBonita
 from django.contrib.auth.views import LoginView, LogoutView
 
 from rest_framework_simplejwt.views import (
@@ -51,6 +52,8 @@ urlpatterns = [
     path('accounts/logout/',LogoutView.as_view(), name='logout'),
 
     path('admin/', admin.site.urls),
+
+    path('consulta_api', ConsultaBonita.as_view(), name='consulta_api'),
 
     # API URLS
     path('api/ordenes_disponibles/', OrdenesList.as_view(), name='ordenes_list'),

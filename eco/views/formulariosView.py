@@ -20,8 +20,8 @@ class FormulariosDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super(FormulariosDetail, self).get_context_data(**kwargs) # GET de la data default del contexto
          #Busco el proceso para saber el estado y para obtener el número de caso en Bonita
-        proceso = Procesos.objects.get(formulario=self.kwargs['pk'])
-        if proceso.estado == "cerrado":
+        proceso = Procesos.objects.filter(formulario=self.kwargs['pk']).first() 
+        if proceso and proceso.estado == "cerrado":
             #Abro comunicación con Bonita
             access = Access(self.request.user.username)
             access.login()  # Login to get the token

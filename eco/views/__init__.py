@@ -7,3 +7,4 @@ from .punto_recoleccionView import Punto_recoleccionCreate, Punto_recoleccionLis
 from .usuariosView import UsuariosList
 from .recicladoresView import RecicladoresList
 from .informesView import marcar_informe_pagado
+from .bonitaView import ConsultaBonita
