@@ -1,0 +1,92 @@
+<html>
+    <head>
+        {# Cargamos libreria bootstrap #}
+        {% load bootstrap4 %}
+        {# Cargamos bootstrap css #}
+        {% bootstrap_css %}
+        {# Archivos #}
+        {% load static %}
+    </head>
+
+    <body style="background-color:#b0ccf1;border-radius: 25px;margin-top: 10px;">
+        {# JS y jquery bootstrap #}
+        {% bootstrap_javascript jquery='full' %}
+        <!-- datos margen sup derecho (logout y username)-->
+        {% if user.is_authenticated %}
+            <form action="{% url 'logout' %}" style="margin-left: 80%;" method="post">
+                <a class="text-center" style="pointer-events: none;color: black;margin-right:3%;" > {{ user.username }} </a>
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-dark">Cerrar sesión</button>
+    
+            </form>
+        
+        {% endif %}
+
+        {% if user.is_staff %}
+        <div style="margin-top: 2%; margin-right: 10%; margin-left: 10%; background-color: white; border-radius: 25px; padding: 20px;">
+            
+            <div class="btn_crear mb-3" style="margin-right:1%;">
+                <h3 style="margin-left:1%;">Solicitudes de registro recibidas: </h3>
+            </div>
+            <!-- tabla de usuarios -->
+            <table class="table table-striped table-hover" style="margin-right: 10%;">
+                <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Usuario</th>
+                    <th>Email</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                
+                <!-- Recorremos los objetos -->
+                {% for solicitante in object_list %}
+                <tr>
+                    <td>{{ solicitante.nombre }}</td>
+                    <td>{{ solicitante.apellido }}</td>
+                    <td>{{ solicitante.username }}</td>
+                    <td>{{ solicitante.email }}</td>
+                    <td>
+                        <!-- Botones -->
+                        <form method="POST" action="../solicitudes/rechazar/{{solicitante.id}}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger" onclick="return eliminar('{{solicitante.nombre}}');">
+                                Rechazar
+                            </button>
+                        </form>
+                    
+                    </td>
+                    <td>
+                        <a href="../solicitudes/aprobar/{{solicitante.id}}" type="button" class="btn btn-success" >Aceptar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            
+                </tbody>
+            </table>
+            <a class="btn btn-primary" style="margin-left:1%;" href="../inicio" type="submit"> < Volver </a>
+        </div>
+        
+        {% else %} <!--no es staff-->
+            <h5 style="font-weight:bold;">Usted no debería estar viendo esta página.</h5>
+            <!-- Botón para volver al Home -->
+            <a href="{% url 'inicio' %}" type="submit" class="btn btn-primary"> < Volver al inicio</a>
+        
+        {% endif %}
+
+    <!-- Script de borrado, aca deberiamos validar reservas antes de borrar -->
+        <script type="text/javascript">
+            function eliminar(nombre) {
+            var x = confirm("¿Desea rechazar la solicitud de "+nombre+"?");
+            if (x)
+                return true;
+            else
+                return false;
+            }
+        </script>
+        </div>
+    </body>
+</html>

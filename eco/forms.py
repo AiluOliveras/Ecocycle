@@ -1,7 +1,7 @@
 from django.db import models
 from django.forms import ModelForm, DateInput
 from django import forms
-from .models import Materiales, Tiposmateriales, Formularios, Punto_recoleccion
+from .models import Materiales, Tiposmateriales, Formularios, Punto_recoleccion, Solicitantes
 from django import forms
 #from django.contrib.auth.models import User
 
@@ -29,3 +29,10 @@ class Punto_recoleccionForm(ModelForm):
     class Meta:
         model = Punto_recoleccion
         fields = ['nombre','direccion']
+
+
+class SolicitantesForm(ModelForm):
+
+    class Meta:
+        model = Solicitantes
+        fields = ['nombre','apellido','username','email']
