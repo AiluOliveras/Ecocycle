@@ -11,3 +11,4 @@ from .punto_procesos import Punto_proceso
 from .evaluacion import Evaluacion
 from .solicitantes import Solicitantes
 from .solicitudes_red import Solicitudes_red
+from .punto_procesos import Punto_proceso
