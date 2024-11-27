@@ -68,7 +68,7 @@
                     
                     <!--evaluacion-->
                     {% if evaluacion %}
-                        <a href="../evaluar/" style="margin-left: 1%;" class="btn btn-outline-dark btn-sm">🧩 Realizar evaluación quincenal (Última vez: {{evaluacion.fecha_fin | date:"d/m/Y"}})</a>
+                        <a href="../evaluar/{{ evaluacion.id }}" style="margin-left: 1%;" class="btn btn-outline-dark btn-sm">🧩 Ver última evaluación (hasta {{evaluacion.fecha_fin | date:"d/m/Y"}})</a>
                     {% else %}
                         <a href="../evaluar/" style="margin-left: 1%;" class="btn btn-outline-dark btn-sm">🧩 Realizar evaluación quincenal</a>
                     {% endif %}
@@ -111,10 +111,10 @@
                             <button type="submit" class="btn btn-primary">📑 Cargar un nuevo formulario</button>
                         </form>
                     </div>
-                    <a href="../puntos_recoleccion/" title="VerPuntosRecoleccion"  type="button" class="btn btn-info">📌 Ver mis puntos de recolección asignados</a> 
-                    <a href="../punto_recoleccion/agregar/" class="btn btn-info">🗺️ Ingresar nuevo punto de recolección</a>
+                    <a href="../puntos_recoleccion/" title="VerPuntosRecoleccion"  type="button" style="margin-top: 1%;" class="btn btn-info">📌 Ver mis puntos de recolección asignados</a> 
+                    <a href="../punto_recoleccion/agregar/" class="btn btn-info" style="margin-top: 1%;">🗺️ Ingresar nuevo punto de recolección</a>
                     {% if evaluacion %}
-                        <a href="../evaluar/{{ evaluacion.id }}" style="margin-left: 1%;margin-top: 1%;" class="btn btn-info">🧩 Ver última evaluación (hasta {{evaluacion.fecha_fin | date:"d/m/Y"}})</a>
+                        <a href="../evaluar/{{ evaluacion.id }}" style="margin-top: 1%;" class="btn btn-info">🧩 Ver última evaluación (hasta {{evaluacion.fecha_fin | date:"d/m/Y"}})</a>
                     {% endif %}
                 {% endif %}
             {% endif %}

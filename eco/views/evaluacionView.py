@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, DeleteView
 from django.views.generic.edit import CreateView, UpdateView
-from ..models import Evaluacion, Informes
+from ..models import Evaluacion, Informes, Materiales, Formularios
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta
 
@@ -15,6 +15,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 
 from eco.bonita.access import Access
 from eco.bonita.process import Process
+from django.db.models import Sum
 
 
 def hacer_evaluacion(request, *args, **kwargs):
@@ -39,7 +40,7 @@ def hacer_evaluacion(request, *args, **kwargs):
             inf.evaluacion_id=evaluacion.id
             inf.save()
 
-        return HttpResponseRedirect('/inicio')
+        return HttpResponseRedirect('/evaluar/'+str(evaluacion.id))
 
     return HttpResponse("Hubo un error, por favor regrese a la página anterior.")
 
@@ -52,7 +53,52 @@ class EvaluacionDetail(DetailView):
         #filtramos data
         #data empleado
         if (self.request.user.is_staff):
-            print('hola')
+            evaluacion_id = self.kwargs['pk']
+
+            #obtengo todos los informes de esa evaluacion
+            informes = Informes.objects.filter(evaluacion_id=evaluacion_id)
+
+            cmf=0
+            kft=0
+            cme=0
+            cmnr=0
+            mp=0
+            kgr=0 #kg de material recibido
+            for inf in informes:
+                #sumar cantidades ded las 2 semanas
+                cmf=cmf+inf.cant_materiales_fallidos
+                kft=kft+inf.kg_faltantes_total
+                cme=cme+inf.cant_materiales_exitosos
+                cmnr=cmnr+inf.cant_mats_no_recibidos
+                mp=mp+inf.monto_pagado
+
+                #CANT KG RECIBIDOS
+                #obtengo su formulario de mats
+                formu_id= (Formularios.objects.get(informe_id=inf.id)).id
+                #por cada material recibido,sumo su cantidad
+                aux=Materiales.objects.filter(formulario_id=formu_id,material_recibido=True).aggregate(Sum('cantidad'))['cantidad__sum']
+                if aux:
+                    kgr=kgr+aux
+                aux=0
+
+
+            context['cant_materiales_fallidos'] = cmf
+            context['kg_faltantes_total'] = kft
+            context['cant_materiales_exitosos'] = cme
+            context['cant_mats_no_recibidos'] = cmnr
+            context['monto_pagado'] = mp
+            context['evaluacion'] = (Evaluacion.objects.latest('id'))
+
+            #porcentaje exitosos
+            total_count=informes.count()
+            total_exitosos=Informes.objects.filter(cant_materiales_fallidos=0,cant_mats_no_recibidos=0,evaluacion_id=evaluacion_id).count()
+            porcen_exit=total_exitosos* 100 / total_count
+            context['porcen_entregas_exitosas'] = porcen_exit
+
+            #cantidad kg recibido
+            context['cantidad_kg_recibidos']=kgr
+            context['precio_por_kg']=round(mp/kgr)
+            
         #data reciclador
         else:
             evaluacion_id = self.kwargs['pk']
