@@ -18,7 +18,7 @@ from django.urls import path, include
 from eco.views import MaterialesCreate, FormulariosDetail, FormulariosCreate, cerrar_formulario, bonita, OrdenesList, OrdenReservaUpdate, OrdenEntregaUpdate, PuntoMaterialRegistro,Punto_recoleccionCreate,Punto_recoleccionList,UsuariosList
 from eco.views import RecicladoresList, destroy_reciclador_punto,create_reciclador_punto, Punto_recoleccion_recicladorList, Materiales_RecibidosCreate
 from eco.views import verificar_punto, procesar_diferencias_formulario, marcar_informe_pagado, hacer_evaluacion, EvaluacionDetail
-from eco.views import SolicitantesCreate, SolicitantesList, SolicitantesDelete, create_reciclador
+from eco.views import SolicitantesCreate, SolicitantesList, SolicitantesDelete, create_reciclador, Solicitudes_redList
 from django.contrib.auth.views import LoginView, LogoutView
 
 from rest_framework_simplejwt.views import (
@@ -55,6 +55,8 @@ urlpatterns = [
     path ('solicitudes/',SolicitantesList.as_view(template_name = "solicitantes/index.html"), name='solicitantes'),
     path ('solicitudes/rechazar/<int:pk>',SolicitantesDelete.as_view()),
     path ('solicitudes/aprobar/<int:pk>',create_reciclador),
+
+    path ('solicitudes_red/',Solicitudes_redList.as_view(template_name = "solicitudes_red/index.html"), name='solicitudes_red'),
 
     path('accounts/login/',LoginView.as_view()),
     path('accounts/logout/',LogoutView.as_view(), name='logout'),
