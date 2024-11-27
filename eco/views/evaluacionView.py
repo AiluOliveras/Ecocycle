@@ -93,7 +93,7 @@ class EvaluacionDetail(DetailView):
             total_count=informes.count()
             total_exitosos=Informes.objects.filter(cant_materiales_fallidos=0,cant_mats_no_recibidos=0,evaluacion_id=evaluacion_id).count()
             porcen_exit=total_exitosos* 100 / total_count
-            context['porcen_entregas_exitosas'] = porcen_exit
+            context['porcen_entregas_exitosas'] = round(porcen_exit)
 
             #cantidad kg recibido
             context['cantidad_kg_recibidos']=kgr

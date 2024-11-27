@@ -21,13 +21,13 @@
             </form>
         {% endif %}
 
-        <div style="margin-top: 5%; margin-right: 25%; margin-left: 25%; background-color: white; border-radius: 25px; padding: 20px;">
-            <h4 class="text-center" style="font-weight:bold;">Detalles de su última evaluación</h4>
+        <div style="margin-top: 5%; margin-right: 20%; margin-left: 20%; background-color: white; border-radius: 25px; padding: 20px;">
+            <h4 class="text-center" style="font-weight:bold;margin-bottom: 4%;">- Detalles de la última evaluación -</h4>
 
             <p><span style="font-weight:bold;">Cantidad total de materiales faltantes en entregas:</span><br> {{ kg_faltantes_total }}kg</p>
 
             <p><span style="font-weight:bold;">Sobre materiales declarados y entregados:</span></p>
-            <p><span> 🟢 Entregó lo declarado en su totalidad:</span> {{ cant_materiales_exitosos }}</p>
+            <p><span> 🟢 Entregado lo declarado en su totalidad:</span> {{ cant_materiales_exitosos }}</p>
             
             <p><span> 🟡 Faltaron materiales (en su totalidad o solo una cantidad):</span> {{ cant_materiales_fallidos }}</p>
             
