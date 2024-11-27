@@ -24,22 +24,33 @@
         <div style="margin-top: 5%; margin-right: 25%; margin-left: 25%; background-color: white; border-radius: 25px; padding: 20px;">
             <h4 class="text-center" style="font-weight:bold;">Detalles de su última evaluación</h4>
 
-            <p><span style="font-weight:bold;">Kg totales faltantes en sus entregas:</span><br>{{ kg_faltantes_total }}</p>
+            <p><span style="font-weight:bold;">Cantidad total de materiales faltantes en entregas:</span><br> {{ kg_faltantes_total }}kg</p>
 
-            <p><span style="font-weight:bold;">Cantidad de materiales declarados y recibidos en su totalidad:</span><br>{{ cant_materiales_exitosos }}</p>
+            <p><span style="font-weight:bold;">Sobre materiales declarados y entregados:</span></p>
+            <p><span> 🟢 Entregó lo declarado en su totalidad:</span> {{ cant_materiales_exitosos }}</p>
             
-            <p><span style="font-weight:bold;">Cantidad de materiales declarados y no recibidos:</span><br>{{ cant_mats_no_recibidos }}</p>
+            <p><span> 🟡 Faltaron materiales (en su totalidad o solo una cantidad):</span> {{ cant_materiales_fallidos }}</p>
             
-            <p><span style="font-weight:bold;">Cantidad de materiales declarados y recibidos incompletos:</span><br> {{ cant_materiales_fallidos }}</p>
+            <p><span>🔴 Faltaron materiales (en su totalidad):</span> {{ cant_mats_no_recibidos }}</p>
+            
 
-            <p><span style="font-weight:bold;">Monto total que se le pagó:</span><br> $ {{ monto_pagado }}</p>
+            {% if not user.is_staff %}
+                <p><span style="font-weight:bold;">Monto total que se le pagó:</span><br> $ {{ monto_pagado }}</p>
+            {% else %}
+                <p><span style="font-weight:bold;">Monto total pagado a recicladores:</span><br> $ {{ monto_pagado }}</p>
+                <p><span style="font-weight:bold;">Porcentaje de entregas exitosas:</span><br> {{ porcen_entregas_exitosas }}%</p>
+                <p><span style="font-weight:bold;">Precio promedio por kg:</span><br>$ {{ precio_por_kg }}</p>    
+                <p><span style="font-weight:bold;">Cantidad de kg de material recibidos:</span><br>{{ cantidad_kg_recibidos }}kg</p>      
+            {% endif %}
 
-
-            <p><span style="font-weight:bold;">Fecha:</span><br> {{ object.fecha_inicio | date:"d/m/Y" }} a {{ object.fecha_fin | date:"d/m/Y" }}</p>
+            <p><span style="font-weight:bold;">Fecha de la evaluación:</span><br> {{ object.fecha_inicio | date:"d/m/Y" }} a {{ object.fecha_fin | date:"d/m/Y" }}</p>
 
             
             <!-- botones inferiores-->
             <div class="text-center" style="margin-top: 20px;">
+                {% if user.is_staff%}
+                    <a href="../evaluar/" style="margin-right: 5%;" class="btn btn-outline-dark">🧩 Realizar nueva evaluación quincenal</a>
+                {% endif %}
                 <a href="/inicio" class="btn btn-danger"> < Volver al inicio</a>
             </div>
         </div>        
