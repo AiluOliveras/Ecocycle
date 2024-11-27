@@ -56,6 +56,8 @@ urlpatterns = [
     path ('solicitudes/rechazar/<int:pk>',SolicitantesDelete.as_view()),
     path ('solicitudes/aprobar/<int:pk>',create_reciclador),
 
+    path ('solicitudes_red/',Solicitudes_redList.as_view(template_name = "solicitudes_red/index.html"), name='solicitudes_red'),
+
     path('accounts/login/',LoginView.as_view()),
     path('accounts/logout/',LogoutView.as_view(), name='logout'),
 

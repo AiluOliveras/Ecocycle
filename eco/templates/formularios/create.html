@@ -64,16 +64,18 @@
 
                 <div style="display: flex;"> 
                     <!-- botones inferiores del staff: puntos de recoleccion -->
-                    <a href="../punto_recoleccion/listar/" style="margin-left: 1%;" class="btn btn-outline-dark">Ver puntos de recolección</a>
+                    <a href="../punto_recoleccion/listar/" style="margin-left: 1%;" class="btn btn-outline-dark btn-sm">Ver puntos de recolección</a>
                     
                     <!--evaluacion-->
                     {% if evaluacion %}
-                        <a href="../evaluar/" style="margin-left: 1%;" class="btn btn-outline-dark">🧩 Realizar evaluación quincenal (Última vez: {{evaluacion.fecha_fin | date:"d/m/Y"}})</a>
+                        <a href="../evaluar/" style="margin-left: 1%;" class="btn btn-outline-dark btn-sm">🧩 Realizar evaluación quincenal (Última vez: {{evaluacion.fecha_fin | date:"d/m/Y"}})</a>
                     {% else %}
-                        <a href="../evaluar/" style="margin-left: 1%;" class="btn btn-outline-dark">🧩 Realizar evaluación quincenal</a>
+                        <a href="../evaluar/" style="margin-left: 1%;" class="btn btn-outline-dark btn-sm">🧩 Realizar evaluación quincenal</a>
                     {% endif %}
                     
-                    <a href="../solicitudes/" class="btn btn-outline-dark" style="margin-left: 1%;">📬 Revisar solicitudes de registro</a>
+                    <a href="../solicitudes/" class="btn btn-outline-dark btn-sm" style="margin-left: 1%;">📬 Revisar solicitudes de registro</a>
+                    <a href="../solicitudes_red/" class="btn btn-outline-dark btn-sm" style="margin-left: 1%;">🌎 Revisar solicitudes de materiales</a>
+
 
                     <p style="font-size: 12px; color:gray;text-align: right;margin-left: 7%;">**Se visualizan únicamente los primeros 10 resultados de la búsqueda.</p>
                 </div>
