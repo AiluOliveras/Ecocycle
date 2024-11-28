@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, DeleteView
 from django.views.generic.edit import CreateView, UpdateView
-from ..models import Solicitantes
+from ..models import Solicitantes, Proceso_solicitante
 from django.contrib.auth.models import User
 
 from django.urls import reverse
@@ -14,7 +14,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 
 from eco.bonita.access import Access
 from eco.bonita.process import Process
-
+from ..models import Proceso_solicitante
 
 
 
@@ -24,6 +24,39 @@ class SolicitantesCreate(SuccessMessageMixin, CreateView):
     
     def get_success_url(self):
         return reverse('inicio')
+
+    def form_valid(self, form):
+
+        #Abro comunicación con Bonita
+        access = Access("solicitante")
+        access.login()  # Login to get the token
+        bonita_process = Process(access)
+
+        #Busco el proceso y lo instancio
+        process_id = bonita_process.getProcessId('Proceso de registro de recolector')
+        response = bonita_process.initiateProcess(process_id)
+        #Me quedo con el ID de la instancia
+        case_id = response['caseId']
+        #Checkeo la instancia
+        bonita_process.checkCase(case_id)
+
+        # Crear y guardar el proceso en la base de datos
+        nuevo_proceso = Proceso_solicitante(
+            username=form.instance.username,  # Usuario que inició el proceso
+            id_bonita=case_id,  # ID de Bonita (caseId)
+        )
+        nuevo_proceso.save()
+
+        #Busco en que tarea me encuentro, para este punto deberia estar en Completar formulario
+        task_data = bonita_process.searchActivityByCase(nuevo_proceso.id_bonita)
+        print(f"DATA DE LA TAREA {task_data}")
+        #La doy por completada
+        task_id = task_data[0]['id']             
+        respuesta = bonita_process.completeActivity(task_id)
+        print(f"SALIDA DEL COMPLETE ACTIVITY {respuesta}")
+
+            
+        return super().form_valid(form)
 
 class SolicitantesList(ListView):
     model = Solicitantes
@@ -41,6 +74,14 @@ class SolicitantesDelete(PermissionRequiredMixin, SuccessMessageMixin, DeleteVie
     permission_required = 'delete_solicitantes'
 
     def get_success_url(self):
+        #Abro comunicación con Bonita
+        access = Access(self.request.user.username)
+        access.login()  # Login to get the token
+        bonita_process = Process(access)
+
+        variable_seteada = bonita_process.setVariableByCase(case_id, 'cumpleRequisitos', "true", 'Boolean')
+        print("Respuesta de setVariableByCase:", variable_seteada.json())
+
         success_message = 'Solicitud rechazada.'
         messages.success (self.request, (success_message))
         return reverse('solicitantes')
@@ -71,6 +112,24 @@ def create_reciclador(request,pk):
             except User.DoesNotExist:
                 #el username está disponible, crea usuario
                 User.objects.create_user(username=solicitante.username,email=solicitante.email,password='123',first_name=solicitante.nombre,last_name=solicitante.apellido,is_superuser=True,is_staff=False)
+                
+            proceso = Proceso_solicitante.objects.get(username=solicitante.username)
+
+            #Abro comunicación con Bonita
+            access = Access(request.user.username)
+            access.login()  # Login to get the token
+            bonita_process = Process(access)
+
+            variable_seteada = bonita_process.setVariableByCase(proceso.id_bonita, 'cumpleRequisitos', "true", 'Boolean')
+            print("Respuesta de setVariableByCase:", variable_seteada)
+
+            task_data = bonita_process.searchActivityByCase(proceso.id_bonita)
+            print(f"DATA DE LA TAREA {task_data}")
+            #La doy por completada
+            task_id = task_data[0]["id"]        
+            respuesta = bonita_process.completeActivity(task_id)
+            print(f"SALIDA DEL COMPLETE ACTIVITY {respuesta}")
+
 
             #borro la solicitud
             Solicitantes.objects.filter(id=pk).delete()

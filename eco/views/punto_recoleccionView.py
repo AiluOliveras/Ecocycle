@@ -15,6 +15,8 @@ from django.http import HttpResponseRedirect, HttpResponse
 from eco.bonita.access import Access
 from eco.bonita.process import Process
 
+from ..models import Proceso_solicitante
+
 class Punto_recoleccionCreate(PermissionRequiredMixin, SuccessMessageMixin, CreateView):
     form_class = Punto_recoleccionForm
     success_message = 'Punto de recolección creado exitosamente!'
@@ -89,6 +91,25 @@ def create_reciclador_punto(request, *args, **kwargs):
             punto_up = Punto_recoleccion.objects.get(id=punto)
             reciclador_up = User.objects.get(id=reciclador)
             punto_up.recicladores.add(reciclador_up)
+
+            try:
+                proceso = Proceso_solicitante.objects.get(username=reciclador_up.username)
+                #Abro comunicación con Bonita
+                access = Access(request.user.username)
+                access.login()  # Login to get the token
+                bonita_process = Process(access)
+
+                task_data = bonita_process.searchActivityByCase(proceso.id_bonita)
+                print(f"DATA DE LA TAREA {task_data}")
+                #La doy por completada
+                task_id = task_data[0]["id"]        
+                respuesta = bonita_process.completeActivity(task_id)
+                print(f"SALIDA DEL COMPLETE ACTIVITY {respuesta}")
+                # Aquí puedes usar el objeto `proceso` como lo necesites
+            except Proceso_solicitante.DoesNotExist:
+                # Manejo del caso en que no se encuentre el objeto
+                pass
+
 
             messages.success(request,('Reciclador añadido exitosamente!'))
             

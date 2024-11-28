@@ -31,7 +31,7 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns = [
     path('bienvenida/', include('eco.urls')),
-
+    path('',LoginView.as_view()),
     path('home/', LoginView.as_view()),
     
     path('inicio/', FormulariosCreate.as_view(template_name = "formularios/create.html"),name='inicio'),

@@ -37,3 +37,7 @@ class Procesos(models.Model):
         choices=ESTADO_CHOICES, 
         default=CARGADO
     )
+
+class Proceso_solicitante(models.Model):
+    id_bonita = models.IntegerField(blank=False)
+    username = models.CharField(max_length=100)
