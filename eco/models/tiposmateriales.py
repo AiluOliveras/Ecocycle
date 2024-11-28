@@ -9,3 +9,5 @@ class Tiposmateriales(models.Model):
 
     #campo para la APP unicamente
     precio_por_kg = models.DecimalField(max_digits=20, decimal_places=2, null=False, default=20)
+
+    trabajado = models.BooleanField(default=False)

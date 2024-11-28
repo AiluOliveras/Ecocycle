@@ -44,7 +44,23 @@
                 <tr>
                     <td>{{ soli.tipo_material.nombre }}</td>
                     <td>{{ soli.cantidad }}</td>
-                    <td>{{ soli.estado }}</td>
+                    <td>
+                        {% if soli.estado == 'P' %}
+                            Pendiente
+                        {% elif soli.estado == 'A' %}
+                            Aprobado
+                        {% elif soli.estado == 'R' %}
+                            Rechazado
+                        {% else %}
+                            {{ soli.estado }}  <!-- En caso de que el estado no sea ninguno de los anteriores -->
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if soli.estado == "P" %}
+                            <a href="./listar/aprobar/?solicitud={{soli.id}}" title="Aprobar" type="button" class="btn btn-primary" style="margin-left: 20px;" >Aprobar</a>
+                        {% endif %}
+                        
+                    </td>
                 </tr>
                 {% endfor %}
             

@@ -16,6 +16,8 @@ from eco.bonita.access import Access
 from eco.bonita.process import Process
 
 
+
+
 class SolicitantesCreate(SuccessMessageMixin, CreateView):
     form_class = SolicitantesForm
     success_message = 'Solicitud de registro creada exitosamente!'

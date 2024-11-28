@@ -20,6 +20,8 @@ from eco.views import RecicladoresList, destroy_reciclador_punto,create_reciclad
 from eco.views import verificar_punto, procesar_diferencias_formulario, marcar_informe_pagado
 from eco.views import ConsultaBonita
 from eco.views import SolicitantesCreate, SolicitantesList, SolicitantesDelete, create_reciclador
+from eco.views import hacer_evaluacion, EvaluacionDetail
+from eco.views import Solicitudes_redList, aprobar_solicitud
 from django.contrib.auth.views import LoginView, LogoutView
 
 from rest_framework_simplejwt.views import (
@@ -57,6 +59,7 @@ urlpatterns = [
     path ('solicitudes/aprobar/<int:pk>',create_reciclador),
 
     path ('solicitudes_red/',Solicitudes_redList.as_view(template_name = "solicitudes_red/index.html"), name='solicitudes_red'),
+    path('solicitudes_red/listar/aprobar/',aprobar_solicitud),
 
     path('accounts/login/',LoginView.as_view()),
     path('accounts/logout/',LogoutView.as_view(), name='logout'),

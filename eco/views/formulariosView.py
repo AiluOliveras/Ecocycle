@@ -32,7 +32,9 @@ class FormulariosDetail(DetailView):
             task_data = bonita_process.searchActivityByCase(proceso.id_bonita)
             print(f"DATA DE LA TAREA {task_data}")
             #La doy por completada
-            task_id = task_data[0]['id']             
+            #TENGO QUE FILTRAR PORQUE EN ESTE PUNTO TENGO DOS TAREAS PARALELAS
+            task_id = next((task['id'] for task in task_data if task['type'] == 'USER_TASK'), None)
+            print(f"ID DE LA TAREA A COMPLETAR {task_id}")
             respuesta = bonita_process.completeActivity(task_id)
             print(f"SALIDA DEL COMPLETE ACTIVITY {respuesta}")
 

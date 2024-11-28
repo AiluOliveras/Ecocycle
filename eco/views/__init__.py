@@ -8,7 +8,7 @@ from .usuariosView import UsuariosList
 from .recicladoresView import RecicladoresList
 from .informesView import marcar_informe_pagado
 from .bonitaView import ConsultaBonita
-from .evaluacionView import hacer_evaluacion,EvaluacionDetail
+from .evaluacionView import hacer_evaluacion, EvaluacionDetail
 from .solicitantesView import SolicitantesCreate,SolicitantesList, SolicitantesDelete, create_reciclador
-from .solicitudes_redView import Solicitudes_redList
+from .solicitudes_redView import Solicitudes_redList, aprobar_solicitud
 from .bonitaView import ConsultaBonita

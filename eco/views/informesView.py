@@ -51,7 +51,7 @@ def marcar_informe_pagado(request, *args, **kwargs):
                 task_data = bonita_process.searchActivityByCase(proceso.id_bonita)
                 print(f"DATA DE LA TAREA {task_data}")
                 #La doy por completada
-                task_id = task_data[0]['id']             
+                task_id = next((task['id'] for task in task_data if task['displayName'] == 'Marca el pago como efectuado'), None)            
                 respuesta = bonita_process.completeActivity(task_id)
                 print(f"SALIDA DEL COMPLETE ACTIVITY {respuesta}")
 

@@ -24,6 +24,16 @@ def hacer_evaluacion(request, *args, **kwargs):
     """
 
     if request.user.is_staff:
+
+        #Abro comunicación con Bonita
+        access = Access(request.user.username)
+        access.login()  # Login to get the token
+        bonita_process = Process(access)
+
+        #Busco el proceso y lo instancio, es automatico asi que no debo hacer nada mas
+        process_id = bonita_process.getProcessId('Proceso de evaluacion de recolectores')
+        response = bonita_process.initiateProcess(process_id)
+
         #fecha hoy
         fecha_hoy = datetime.now()
         #fecha dos semanas atras
