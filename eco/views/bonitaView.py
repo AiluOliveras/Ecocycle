@@ -28,13 +28,13 @@ class ConsultaBonita(APIView):
                 hay_disponibles = any(item["reservado"] == False for item in ordenes)
 
                 # Si no hay disponibles, ya devuelvo
-                if not ordenes:
+                if not hay_disponibles:
                     return Response({"hayDisponibles": hay_disponibles, "puedoCubrir": False})
                 # Si hay disponibles, debo chequear si las puedo satisfacer
                 else:
 
                     puedo_cubrir = False # Chequear si puedo cubrir
-                    
+                    print(f"Devuelvo hayDisponibles {hay_disponibles} y puedoCubrir {puedo_cubrir}")
                     return Response({"hayDisponibles": hay_disponibles, "puedoCubrir": puedo_cubrir})
 
                 return Response(response.json()) 
